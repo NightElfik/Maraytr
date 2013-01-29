@@ -1,0 +1,16 @@
+
+# rubbish
+/backup
+
+# .NET rubbish
+*.suo
+*.vsmdi
+
+bin/
+obj/
+
+/src/Maraytr/TestResults
+
+# Windows rubbish
+Thumbs.db
+ehthumbs.db

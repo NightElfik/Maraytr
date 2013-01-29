@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maraytr", "Maraytr\Maraytr.csproj", "{FDF890E1-58B9-45C3-887D-8F9EE6F96D9A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maraytr.Tests", "Maraytr.Tests\Maraytr.Tests.csproj", "{8412A9AC-4E00-4212-938D-465EA61AF4C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maraytr.WinFormsUi", "Maraytr.WinFormsUi\Maraytr.WinFormsUi.csproj", "{6503A659-B0AB-425C-8F29-E5399C0E6958}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FDF890E1-58B9-45C3-887D-8F9EE6F96D9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDF890E1-58B9-45C3-887D-8F9EE6F96D9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDF890E1-58B9-45C3-887D-8F9EE6F96D9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDF890E1-58B9-45C3-887D-8F9EE6F96D9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8412A9AC-4E00-4212-938D-465EA61AF4C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8412A9AC-4E00-4212-938D-465EA61AF4C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8412A9AC-4E00-4212-938D-465EA61AF4C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8412A9AC-4E00-4212-938D-465EA61AF4C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6503A659-B0AB-425C-8F29-E5399C0E6958}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6503A659-B0AB-425C-8F29-E5399C0E6958}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6503A659-B0AB-425C-8F29-E5399C0E6958}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6503A659-B0AB-425C-8F29-E5399C0E6958}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
