@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Maraytr.Materials;
-using Maraytr.Numerics;
 
 namespace Maraytr.RayCasting {
 	public interface IIntersectable {
@@ -13,9 +12,7 @@ namespace Maraytr.RayCasting {
 
 		IMaterial Material { get; set; }
 
-		//Matrix4Affine TransformToWorld { get; }
-
-		IntersectionDetails ComputeIntersectionDetails(Intersection intersection);
+		void CompleteIntersection(Intersection intersection);
 
 	}
 }

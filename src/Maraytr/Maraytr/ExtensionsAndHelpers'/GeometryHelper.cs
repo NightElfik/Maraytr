@@ -37,7 +37,7 @@ namespace Maraytr {
 				p1.Z = v.Y;
 			}
 
-			Debug.Assert(v.Dot(p1).IsAlmostEqualTo(0.0));
+			Debug.Assert(v.Dot(p1).IsAlmostZero());
 
 			p2 = v.Cross(p1);
 		}

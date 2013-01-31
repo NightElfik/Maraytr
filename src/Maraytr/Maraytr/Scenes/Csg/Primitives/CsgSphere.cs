@@ -40,7 +40,7 @@ namespace Maraytr.Scenes.Csg.Primitives {
 			double ss = ray.StartPoint.Dot(ray.StartPoint);
 
 			double discrOver4 = sd * sd - ss + 1;
-			if (discrOver4 <= 0.0 || discrOver4.IsAlmostEqualTo(0.0)) {
+			if (discrOver4 <= 0.0 || discrOver4.IsAlmostZero()) {
 				return;  // 0 or 1 solution, but we want two
 			}
 
@@ -59,18 +59,14 @@ namespace Maraytr.Scenes.Csg.Primitives {
 
 		}
 
-		public IntersectionDetails ComputeIntersectionDetails(Intersection intersection) {
-
-			var details = new IntersectionDetails();
-
+		public void CompleteIntersection(Intersection intersection) {
+			
 			Vector3 localIntPt = intersection.Ray.StartPoint + intersection.RayParameter * intersection.Ray.Direction;
 
-			details.Normal = GeometryHelper.TransformNormal(localIntPt, transformToWorld);
+			intersection.Normal = GeometryHelper.TransformNormal(localIntPt, transformToWorld);
 
-			details.TextureCoord.X = Math.Atan2(localIntPt.Y, localIntPt.X) / (2.0 * Math.PI) + 0.5;
-			details.TextureCoord.Y = Math.Atan2(1, localIntPt.Z) / Math.PI;
-
-			return details;
+			intersection.TextureCoord.X = Math.Atan2(localIntPt.Z, localIntPt.X) / (2.0 * Math.PI) + 0.5;
+			intersection.TextureCoord.Y = Math.Atan2(1, localIntPt.Y) / Math.PI;
 
 		}
 

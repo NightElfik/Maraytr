@@ -4,9 +4,13 @@ using Maraytr.Numerics;
 namespace Maraytr {
 	public static class FloatArithmeticHelper {
 
-		public const double DBL_EPSILON = 1.192093E-07;
+		public const double DBL_EPSILON = 1.0E-07;
 		public const float SGL_EPSILON = 1.0E-05f;
 
+
+		public static bool IsAlmostZero(this double value) {
+			return value < 10.0 * DBL_EPSILON && value > -10.0 * DBL_EPSILON;
+		}
 
 		public static bool IsAlmostEqualTo(this double value1, double value2) {
 
@@ -34,6 +38,10 @@ namespace Maraytr {
 			double delta = value1 - value2;
 			return (-eps < delta) && (eps > delta);
 
+		}
+
+		public static bool IsEpsilonGreaterThanZero(this double value) {
+			return value > 10 * DBL_EPSILON;
 		}
 
 		public static bool IsAlmostEqualTo(this Vector3 v1, Vector3 v2) {

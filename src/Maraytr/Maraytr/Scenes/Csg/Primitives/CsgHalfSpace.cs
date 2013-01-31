@@ -9,7 +9,13 @@ namespace Maraytr.Scenes.Csg.Primitives {
 	public class CsgHalfSpace : CsgNode, IIntersectableObject {
 
 		private Matrix4Affine transformToWorld;
-		
+
+
+		public CsgHalfSpace() {
+			Width = double.PositiveInfinity;
+		}
+
+		public double Width { get; set; }
 
 		public IMaterial Material { get; set; }
 
@@ -25,41 +31,43 @@ namespace Maraytr.Scenes.Csg.Primitives {
 			// 0 = Sy + t Dy
 			// -Sy / Dy = t
 
-			if (ray.Direction.Y.IsAlmostEqualTo(0.0)) {
+			if (ray.Direction.Y.IsAlmostZero()) {
 				return;
 			}
 
 			double tZero = -ray.StartPoint.Y / ray.Direction.Y;
-			Vector3 tPosWorld = transformToWorld.Transform(ray.StartPoint + tZero * ray.Direction);
-			double tDistSgnSq = (tPosWorld - ray.RayWorldCoords.StartPoint).LengthSquared * (tZero >= 0.0 ? 1 : -1);
+			double tWid = (-Width - ray.StartPoint.Y) / ray.Direction.Y;
+
+			Vector3 tZeroPosWorld = transformToWorld.Transform(ray.StartPoint + tZero * ray.Direction);
+			Vector3 tWidPosWorld = double.IsInfinity(tWid)
+				? (ray.Direction.Y > 0.0 ? Vector3.NegativeInfinity : Vector3.PositiveInfinity)
+				: (transformToWorld.Transform(ray.StartPoint + tWid * ray.Direction));
+
+			double tZeroDistSgnSq = (tZeroPosWorld - ray.RayWorldCoords.StartPoint).LengthSquared * (tZero >= 0.0 ? 1 : -1);
+			double tWidDistSgnSq = (tWidPosWorld - ray.RayWorldCoords.StartPoint).LengthSquared * (tWid >= 0.0 ? 1 : -1);
 
 			if (ray.Direction.Y > 0.0) {
 				// ray going away from half plane
-				outIntersections.Add(new Intersection(this, true, ray, double.NegativeInfinity, Vector3.NegativeInfinity, double.NegativeInfinity));
-				outIntersections.Add(new Intersection(this, false, ray, tZero, tPosWorld, tDistSgnSq));
+				outIntersections.Add(new Intersection(this, true, ray, tWid, tWidPosWorld, tWidDistSgnSq));
+				outIntersections.Add(new Intersection(this, false, ray, tZero, tZeroPosWorld, tZeroDistSgnSq));
 			}
 			else {
 				// ray going into half plane
-				outIntersections.Add(new Intersection(this, true, ray, tZero, tPosWorld, tDistSgnSq));
-				outIntersections.Add(new Intersection(this, false, ray, double.PositiveInfinity, Vector3.PositiveInfinity, double.PositiveInfinity));
-			}		
+				outIntersections.Add(new Intersection(this, true, ray, tZero, tZeroPosWorld, tZeroDistSgnSq));
+				outIntersections.Add(new Intersection(this, false, ray, tWid, tWidPosWorld, tWidDistSgnSq));
+			}
 
 		}
 
-		public IntersectionDetails ComputeIntersectionDetails(Intersection intersection) {
-
-			var details = new IntersectionDetails();
+		public void CompleteIntersection(Intersection intersection) {
 
 			Vector3 localIntPt = intersection.Ray.StartPoint + intersection.RayParameter * intersection.Ray.Direction;
+			Debug.Assert(localIntPt.Y.IsAlmostZero());
 
-			details.Normal = new Vector3(0, 1, 0);
+			intersection.Normal = new Vector3(0, 1, 0);
 
-			details.TextureCoord.X = localIntPt.X;
-			details.TextureCoord.Y = localIntPt.Z;
-
-			Debug.Assert(localIntPt.Y.IsAlmostEqualTo(0.0));
-
-			return details;
+			intersection.TextureCoord.X = localIntPt.X;
+			intersection.TextureCoord.Y = localIntPt.Z;
 
 		}
 

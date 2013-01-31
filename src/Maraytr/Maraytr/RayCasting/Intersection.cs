@@ -34,8 +34,15 @@ namespace Maraytr.RayCasting {
 
 		public bool InverseNormal;
 
+		public Vector3 Normal;
 
-		public Intersection(IIntersectableObject intersectedObject, bool isEnter, Ray localRay, double rayParameter, Vector3 worldsPos, double rayDistSqSgn) {
+		public Vector2 TextureCoord;
+
+		public object AdditionalData;
+
+
+		public Intersection(IIntersectableObject intersectedObject, bool isEnter, Ray localRay, double rayParameter,
+				Vector3 worldsPos, double rayDistSqSgn, object additionalData = null) {
 			IntersectedObject = intersectedObject;
 			IsEnter = isEnter;
 			Ray = localRay;
@@ -43,10 +50,13 @@ namespace Maraytr.RayCasting {
 			Position = worldsPos;
 			RayDistanceSqSigned = rayDistSqSgn;
 			InverseNormal = false;
+			AdditionalData = additionalData;
 		}
 
-		public IntersectionDetails ComputeIntersectionDetails() {
-			return IntersectedObject.ComputeIntersectionDetails(this);
+		public Vector3 LocalIntersectionPt { get { return Ray.StartPoint + RayParameter * Ray.Direction; } } 
+
+		public void CompleteIntersection() {
+			IntersectedObject.CompleteIntersection(this);
 		}
 		
 

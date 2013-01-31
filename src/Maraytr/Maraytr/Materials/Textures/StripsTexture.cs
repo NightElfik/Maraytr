@@ -2,17 +2,16 @@
 using Maraytr.Numerics;
 
 namespace Maraytr.Materials.Textures {
-	public class CheckerTexture : ITexture {
+	public class StripsTexture : ITexture {
 
-		public double UFrequency { get; set; }
-		public double VFrequency { get; set; }
+		public double Frequency { get; set; }
+		public bool Orientation { get; set; }
 
 		public ColorRgbt EvenColor { get; set; }
 		public ColorRgbt OddColor { get; set; }
 
-		public CheckerTexture() {
-			UFrequency = 1;
-			VFrequency = 1;
+		public StripsTexture() {
+			Frequency = 1;
 
 			OddColor = new ColorRgbt(0.3f, 0.3f, 0.3f);
 			EvenColor = new ColorRgbt(1, 1, 1);
@@ -21,13 +20,11 @@ namespace Maraytr.Materials.Textures {
 
 		public ColorRgbt GetColorAt(Vector2 coords) {
 
-			double u = coords.X * UFrequency;
-			double v = coords.Y * VFrequency;
+			double t = (Orientation ? coords.X : coords.Y) * Frequency;
 
-			long ui = (long)Math.Floor(u);
-			long vi = (long)Math.Floor(v);
+			long ti = (long)Math.Floor(t);
 
-			if (((ui + vi) & 1) == 0) {
+			if ((ti & 1) == 0) {
 				return EvenColor;
 			}
 			else {

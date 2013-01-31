@@ -35,7 +35,7 @@ namespace Maraytr.RayCasting {
 			Vector3 startPoint = transformation.Transform(StartPoint);
 			Vector3 direction = transformation.TransformVector(Direction);
 			direction.NormalizeThis();
-			return new Ray(startPoint, direction, this);
+			return new Ray(startPoint, direction, RayWorldCoords);
 
 		}
 

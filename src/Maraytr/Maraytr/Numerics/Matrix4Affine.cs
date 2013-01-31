@@ -277,7 +277,7 @@ namespace Maraytr.Numerics {
 				- M12 * (M21 * M33 - M23 * M31)
 				+ M13 * (M21 * M32 - M22 * M31);
 
-			Debug.Assert(!det.IsAlmostEqualTo(0.0));
+			Debug.Assert(!det.IsAlmostZero());
 
 			double invDet = 1.0 / det;
 
@@ -316,7 +316,7 @@ namespace Maraytr.Numerics {
 			//double c0 = M31 * M42 - M41 * M32;
 
 			//double det = s0 * c5 - s1 * c4 + s2 * c3 + s3 * c2 - s4 * c1 + s5 * c0;
-			//Debug.Assert(!det.IsAlmostEqualTo(0.0));
+			//Debug.Assert(!det.IsAlmostZero());
 
 			//double invDet = 1.0 / det;
 

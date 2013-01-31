@@ -9,22 +9,29 @@ using Maraytr.Numerics;
 namespace Maraytr.Materials {
 	public class PhongReflectionModel : IReflectionModel {
 
-		public ColorRgbt CountReflection(IMaterial material, Vector3 surfaceNormal, Vector3 lightDirection, Vector3 viewDirection) {
+		public ColorRgbt CountReflection(IMaterial material, ColorRgbt baseColor, Vector3 surfaceNormal, Vector3 lightDirection, Vector3 viewDirection) {
 
 			Contract.Requires<ArgumentException>(material is PhongMaterial);
 
 			PhongMaterial mat = material as PhongMaterial;
 
-			float diffIntensity = (float)lightDirection.Dot(surfaceNormal);
-			ColorRgbt diffuseColor = diffIntensity * mat.DiffuseReflectionCoef;
+
+			ColorRgbt resultColor = ColorRgbt.Black;
+
+			float diffFactor = (float)lightDirection.Dot(surfaceNormal);
+			if (diffFactor <= 0) {
+				return resultColor;
+			}
+
+			resultColor += baseColor * diffFactor * mat.DiffuseReflectionCoef;
 
 			Vector3 halfVector = lightDirection + viewDirection;
 			halfVector.NormalizeThis();
 
-			float specularIntensity = (float)Math.Pow(surfaceNormal.Dot(halfVector), mat.ShininessCoef);
-			ColorRgbt specularColor = specularIntensity * mat.SpecularReflectionCoef;
+			float specularFactor = (float)Math.Pow(surfaceNormal.Dot(halfVector), mat.ShininessCoef);
+			resultColor += specularFactor * mat.SpecularReflectionCoef;
 
-			return diffuseColor + specularColor;
+			return resultColor;
 		}
 	}
 }

@@ -23,7 +23,7 @@ namespace Maraytr.Scenes.Csg {
 		//public Matrix4Affine TransformToParent {
 		//	get { return transformToParent; }
 		//	set {
-		//		Contract.Requires<ArgumentException>(!value.Determinant().IsAlmostEqualTo(0.0));
+		//		Contract.Requires<ArgumentException>(!value.Determinant().IsAlmostZero());
 		//		transformToParent = value;
 		//	}
 		//}
@@ -31,7 +31,7 @@ namespace Maraytr.Scenes.Csg {
 		//public Matrix4Affine TransformFromParent {
 		//	get { return transformFromParent; }
 		//	set {
-		//		Contract.Requires<ArgumentException>(!value.Determinant().IsAlmostEqualTo(0.0));
+		//		Contract.Requires<ArgumentException>(!value.Determinant().IsAlmostZero());
 		//		transformFromParent = value;
 		//	}
 		//}

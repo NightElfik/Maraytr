@@ -52,15 +52,13 @@ namespace Maraytr.Scenes.Csg {
 
 		public override void Intersect(Ray ray, ICollection<Intersection> outIntersections) {
 
+			Contract.Requires<ArgumentNullException>(ChildrensCount >= 1);
 			Contract.Requires<ArgumentNullException>(outIntersections != null);
-			Contract.Requires<InvalidOperationException>(Operation == CsgBoolOperation.Difference && ChildrensCount == 2 || Operation != CsgBoolOperation.Difference);
 			Contract.Ensures(outIntersections.Count % 2 == 0);  // number of intersections is allways even (enter and exit are paired).
 
 			var intersections = new List<Intersection>();
 
 			if (Operation == CsgBoolOperation.Difference) {
-				Debug.Assert(childrens.Count == 2);
-
 				childrens[0].Intersect(ray.Transform(childTransforms[0]), intersections);
 				if (intersections.Count == 0) {
 					return;
@@ -68,9 +66,11 @@ namespace Maraytr.Scenes.Csg {
 
 				var minuends = intersections.Select(x => x.IntersectedObject).ToList();
 
-				childrens[1].Intersect(ray.Transform(childTransforms[1]), intersections);
-				intersections.Sort();
+				for (int i = 1; i < childrens.Count; ++i) {
+					childrens[i].Intersect(ray.Transform(childTransforms[i]), intersections);
+				}
 
+				intersections.Sort();
 				computeDifference(intersections, minuends, outIntersections);
 				return;
 			}
@@ -87,37 +87,30 @@ namespace Maraytr.Scenes.Csg {
 			intersections.Sort();
 
 			switch (Operation) {
-				case CsgBoolOperation.Union: computeUnion(intersections, outIntersections); break;
-				case CsgBoolOperation.Intersection: throw new NotImplementedException();
+				case CsgBoolOperation.Union: computeIntersection(intersections, outIntersections, 1); break;
+				case CsgBoolOperation.Intersection: computeIntersection(intersections, outIntersections, childrens.Count); break;
 				case CsgBoolOperation.Xor: throw new NotImplementedException();
 				default: throw new InvalidOperationException("Invalid operation of CSG node.");
 			}
 		}
-
-
-		private void computeUnion(List<Intersection> intersections, ICollection<Intersection> outIntersections) {
+		
+		private void computeIntersection(List<Intersection> intersections, ICollection<Intersection> outIntersections, int requiredObjectsCount) {
 
 			int insideCount = 0;
 
 			foreach (var intersec in intersections) {
-
-				if (insideCount == 0) {
-					Debug.Assert(intersec.IsEnter);  // the first intersection should be entering
-					outIntersections.Add(intersec);  // add entering intersection to the result
+				if (intersec.IsEnter) {
 					++insideCount;
+					if (insideCount == requiredObjectsCount) {
+						outIntersections.Add(intersec);  // add entering intersection to the result
+					}
 				}
 				else {
-					if (intersec.IsEnter) {
-						++insideCount;
+					if (insideCount == requiredObjectsCount) {
+						outIntersections.Add(intersec);  // add leaving intersection to the result
 					}
-					else {
-						if (insideCount == 1) {
-							outIntersections.Add(intersec);  // add leaving intersection to the result
-						}
-						--insideCount;
-					}
+					--insideCount;
 				}
-
 			}
 
 			Debug.Assert(insideCount == 0);
@@ -128,7 +121,7 @@ namespace Maraytr.Scenes.Csg {
 
 			// minuend − subtrahend = difference
 			bool inMinuend = false;
-			bool inSubtrahend = false;
+			int inSubtrahendCount = 0;
 
 			foreach (var intersec in intersections) {
 				bool isMinuend = minuends.Contains(intersec.IntersectedObject);
@@ -137,7 +130,7 @@ namespace Maraytr.Scenes.Csg {
 					if (intersec.IsEnter) {
 						Debug.Assert(inMinuend == false);
 						inMinuend = true;
-						if (!inSubtrahend) {
+						if (inSubtrahendCount == 0) {
 							// minuend started normally
 							outIntersections.Add(intersec);
 						}
@@ -146,7 +139,7 @@ namespace Maraytr.Scenes.Csg {
 					else {
 						Debug.Assert(inMinuend == true);
 						inMinuend = false;
-						if (!inSubtrahend) {
+						if (inSubtrahendCount == 0) {
 							// minuend ended normally
 							outIntersections.Add(intersec);
 						}
@@ -155,9 +148,8 @@ namespace Maraytr.Scenes.Csg {
 				}
 				else {
 					if (intersec.IsEnter) {
-						Debug.Assert(inSubtrahend == false);
-						inSubtrahend = true;
-						if (inMinuend) {
+						++inSubtrahendCount;
+						if (inSubtrahendCount == 1 && inMinuend) {
 							// subtrahend started in minuend, end minuend
 							intersec.IsEnter = false;
 							intersec.InverseNormal ^= true;
@@ -166,9 +158,9 @@ namespace Maraytr.Scenes.Csg {
 						// else do nothing -- subtrahend started alone
 					}
 					else {
-						Debug.Assert(inSubtrahend == true);
-						inSubtrahend = false;
-						if (inMinuend) {
+						Debug.Assert(inSubtrahendCount > 0);
+						--inSubtrahendCount;
+						if (inSubtrahendCount == 0 && inMinuend) {
 							// subtrahend ended in minuend, start minuend
 							intersec.IsEnter = true;
 							intersec.InverseNormal ^= true;

@@ -31,6 +31,8 @@ namespace Maraytr.Numerics {
 		public static ColorRgbt operator *(float left, ColorRgbt right) {
 			return new ColorRgbt(left * right.R, left * right.G, left * right.B, left * right.T);
 		}
+
+		public static readonly ColorRgbt Black = new ColorRgbt(0, 0, 0, 0);
 		
 
 	}

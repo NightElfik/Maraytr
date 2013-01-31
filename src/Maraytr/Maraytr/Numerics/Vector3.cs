@@ -36,6 +36,9 @@ namespace Maraytr.Numerics {
 		}
 
 		public static readonly Vector3 Zero = new Vector3(0, 0, 0);
+		public static readonly Vector3 XAxis = new Vector3(1, 0, 0);
+		public static readonly Vector3 YAxis = new Vector3(0, 1, 0);
+		public static readonly Vector3 ZAxis = new Vector3(0, 0, 1);
 		public static readonly Vector3 PositiveInfinity =new Vector3(double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity);
 		public static readonly Vector3 NegativeInfinity = new Vector3(double.NegativeInfinity, double.NegativeInfinity, double.NegativeInfinity);
 
@@ -45,7 +48,7 @@ namespace Maraytr.Numerics {
 
 		public bool IsNormalized { get { return LengthSquared.IsAlmostEqualTo(1.0); } }
 
-		public bool IsZero { get { return LengthSquared.IsAlmostEqualTo(0.0); } }
+		public bool IsZero { get { return LengthSquared.IsAlmostZero(); } }
 
 
 		public Vector3 Normalize() {

@@ -11,6 +11,8 @@ namespace Maraytr.Materials {
 
 		public ITexture Texture { get; set; }
 
+		public ColorRgbt BaseColor { get; set; }
+
 		public ColorRgbt SpecularReflectionCoef;
 
 		public ColorRgbt DiffuseReflectionCoef;
