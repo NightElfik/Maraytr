@@ -6,7 +6,7 @@ namespace Maraytr.Rendering {
 
 		Size Size { get; }
 
-		ColorRgbt GetSample(double x, double y);
+		ColorRgbt GetSample(double x, double y, IntegrationState intState);
 
 	}
 }

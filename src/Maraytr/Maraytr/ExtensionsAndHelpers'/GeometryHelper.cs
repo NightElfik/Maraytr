@@ -42,25 +42,5 @@ namespace Maraytr {
 			p2 = v.Cross(p1);
 		}
 
-		/// <summary>
-		/// Transforms normal vector by given transformation. Result normal is not normalized.
-		/// </summary>
-		/// <remarks>
-		/// Transformation can not be applied directly to normal because scale transformation do not preserve normals.
-		/// But we can apply transformation to tangent vectors.
-		/// </remarks>
-		public static Vector3 TransformNormal(Vector3 normal, Matrix4Affine transformation) {
-
-			Contract.Requires<ArgumentException>(!normal.IsZero);
-			Contract.Requires<ArgumentNullException>(transformation != null);
-			Contract.Ensures(!Contract.Result<Vector3>().IsZero);
-
-			Vector3 v1, v2;
-			FindPerpendicular(normal, out v1, out v2);
-			v1 = transformation.TransformVector(v1);
-			v2 = transformation.TransformVector(v2);
-			return v1.Cross(v2);
-		}
-
 	}
 }

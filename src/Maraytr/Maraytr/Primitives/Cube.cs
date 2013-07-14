@@ -1,28 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Maraytr.Materials;
 using Maraytr.Numerics;
 using Maraytr.RayCasting;
 
 namespace Maraytr.Scenes.Csg.Primitives {
-	public class CsgCube : CsgNode, IIntersectableObject {
+	public class Cube : IIntersectableObject {
 
-		private Matrix4Affine transformToWorld;
-
-
-		public IMaterial Material { get; set; }
-
-		public override void PrecomputeWorldTransform(Matrix4Affine worldTransform) {
-			transformToWorld = worldTransform;
-		}
-
-
-
-		public override void Intersect(Ray ray, ICollection<Intersection> outIntersections) {
+		public int Intersect(Ray ray, ICollection<Intersection> outIntersections) {
 
 			// http://www.siggraph.org/education/materials/HyperGraph/raytrace/rtinter3.htm
 			double tMin = Double.NegativeInfinity;
@@ -34,7 +19,7 @@ namespace Maraytr.Scenes.Csg.Primitives {
 			// X axis
 			if (ray.Direction.X.IsAlmostZero()) {
 				if (ray.StartPoint.X < 0 || ray.StartPoint.X > 1) {
-					return;
+					return 0;
 				}
 			}
 			else {
@@ -64,14 +49,14 @@ namespace Maraytr.Scenes.Csg.Primitives {
 				}
 
 				if (tMax < 0.0 || tMin > tMax) {
-					return;
+					return 0;
 				}
 			}
 
 			// Y axis
 			if (ray.Direction.Y.IsAlmostZero()) {
 				if (ray.StartPoint.Y < 0 || ray.StartPoint.Y > 1) {
-					return;
+					return 0;
 				}
 			}
 			else {
@@ -101,14 +86,14 @@ namespace Maraytr.Scenes.Csg.Primitives {
 				}
 
 				if (tMax < 0.0 || tMin > tMax) {
-					return;
+					return 0;
 				}
 			}
 
 			// Z axis
 			if (ray.Direction.Z.IsAlmostZero()) {
 				if (ray.StartPoint.Z < 0 || ray.StartPoint.Z > 1) {
-					return;
+					return 0;
 				}
 			}
 			else {
@@ -138,26 +123,19 @@ namespace Maraytr.Scenes.Csg.Primitives {
 				}
 
 				if (tMax < 0.0 || tMin > tMax) {
-					return;
+					return 0;
 				}
 			}
 
 			Debug.Assert(!double.IsInfinity(tMin) && !double.IsInfinity(tMax));
+			Debug.Assert(tMin < tMax);
 
-			Vector3 enterPosWorld = transformToWorld.Transform(ray.StartPoint + tMin * ray.Direction);
-			Vector3 leavePosWorld = transformToWorld.Transform(ray.StartPoint + tMax * ray.Direction);
-
-			double enterDistSqSgn = (enterPosWorld - ray.RayWorldCoords.StartPoint).LengthSquared * (tMin >= 0.0 ? 1 : -1);
-			double leaveDistSqSgn = (leavePosWorld - ray.RayWorldCoords.StartPoint).LengthSquared * (tMax >= 0.0 ? 1 : -1);
-
-			outIntersections.Add(new Intersection(this, true, ray, tMin, enterPosWorld, enterDistSqSgn, intersectePlaneMin));
-			outIntersections.Add(new Intersection(this, false, ray, tMin, leavePosWorld, leaveDistSqSgn, intersectePlaneMax));
+			outIntersections.Add(new Intersection(this, true, ray, tMin, intersectePlaneMin));
+			outIntersections.Add(new Intersection(this, false, ray, tMax, intersectePlaneMax));
+			return 2;
 		}
-
-
+		
 		public void CompleteIntersection(Intersection intersection) {
-
-			Vector3 localIsec = intersection.LocalIntersectionPt;
 
 			switch ((char)intersection.AdditionalData) {
 				case 'x': intersection.Normal = Vector3.XAxis; break;
@@ -168,6 +146,8 @@ namespace Maraytr.Scenes.Csg.Primitives {
 				case 'Z': intersection.Normal = -Vector3.ZAxis; break;
 				default: throw new InvalidOperationException("Additional data should contain information about intersected plane.");
 			}
+
+			Vector3 localIsec = intersection.LocalIntersectionPt;
 
 			switch ((char)intersection.AdditionalData) {
 				case 'x':

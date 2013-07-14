@@ -8,5 +8,7 @@ namespace Maraytr.Materials {
 
 		ITexture Texture { get; }
 
+		float ReflectionFactor { get; }
+
 	}
 }

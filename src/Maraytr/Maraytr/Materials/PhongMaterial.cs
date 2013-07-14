@@ -9,9 +9,11 @@ using Maraytr.Numerics;
 namespace Maraytr.Materials {
 	public class PhongMaterial : IMaterial {
 
+		public ColorRgbt BaseColor { get; set; }
+
 		public ITexture Texture { get; set; }
 
-		public ColorRgbt BaseColor { get; set; }
+		public float ReflectionFactor { get; set; }
 
 		public ColorRgbt SpecularReflectionCoef;
 

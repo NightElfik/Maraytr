@@ -109,9 +109,10 @@
   <ItemGroup>
     <Compile Include="Cameras\ICamera.cs" />
     <Compile Include="Cameras\PerspectiveCamera.cs" />
-    <Compile Include="ExtensionsAndHelpers%27\FloatArithmeticHelper.cs" />
+    <Compile Include="ExtensionsAndHelpers%27\FloatArithmeticUtils.cs" />
     <Compile Include="ExtensionsAndHelpers%27\GeometryHelper.cs" />
     <Compile Include="ExtensionsAndHelpers%27\MathHelper.cs" />
+    <Compile Include="Lights\AreaLightSource.cs" />
     <Compile Include="Lights\ILightSource.cs" />
     <Compile Include="Lights\PointLight.cs" />
     <Compile Include="Materials\IMaterial.cs" />
@@ -124,6 +125,7 @@
     <Compile Include="Numerics\ColorRgbt.cs" />
     <Compile Include="Numerics\Vector2.cs" />
     <Compile Include="Numerics\Size.cs" />
+    <Compile Include="RayTracing\RayTracer.cs" />
     <Compile Include="Rendering\IImageFunction.cs" />
     <Compile Include="RayCasting\IIntersectable.cs" />
     <Compile Include="RayCasting\IntegrationState.cs" />
@@ -133,13 +135,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RayCasting\Ray.cs" />
     <Compile Include="RayCasting\RayCaster.cs" />
+    <Compile Include="Rendering\SupersamplingImageFunction.cs" />
     <Compile Include="Rendering\ParalellImageFuncFetcher.cs" />
     <Compile Include="Scenes\Csg\CsgBoolOperation.cs" />
     <Compile Include="Scenes\Csg\CsgBoolOperationNode.cs" />
     <Compile Include="Scenes\Csg\CsgNode.cs" />
-    <Compile Include="Scenes\Csg\Primitives\CsgCube.cs" />
-    <Compile Include="Scenes\Csg\Primitives\CsgHalfSpace.cs" />
-    <Compile Include="Scenes\Csg\Primitives\CsgSphere.cs" />
+    <Compile Include="Primitives\Cube.cs" />
+    <Compile Include="Primitives\HalfSpace.cs" />
+    <Compile Include="Primitives\Sphere.cs" />
+    <Compile Include="Scenes\Csg\CsgObjectNode.cs" />
     <Compile Include="Scenes\Scene.cs" />
   </ItemGroup>
   <ItemGroup>

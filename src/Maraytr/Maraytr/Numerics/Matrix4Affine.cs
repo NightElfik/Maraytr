@@ -133,6 +133,18 @@ namespace Maraytr.Numerics {
 			return m;
 		}
 
+		public static Matrix4Affine CreateRotationX(double angle) {
+			double sin = Math.Sin(angle);
+			double cos = Math.Cos(angle);
+			var m = new Matrix4Affine();
+			m.M11 = 1;
+			m.M22 = cos;
+			m.M23 = -sin;
+			m.M32 = sin;
+			m.M33 = cos;
+			return m;
+		}
+
 		#endregion
 
 
@@ -361,6 +373,25 @@ namespace Maraytr.Numerics {
 				M11 * v.X + M12 * v.Y + M13 * v.Z,
 				M21 * v.X + M22 * v.Y + M23 * v.Z,
 				M31 * v.X + M32 * v.Y + M33 * v.Z);
+
+		}
+
+		/// <summary>
+		/// Transforms normal vector by given transformation. Result normal is not normalized.
+		/// </summary>
+		/// <remarks>
+		/// Transformation can not be applied directly to normal because scale transformation do not preserve normals.
+		/// But we can apply transformation to tangent vectors.
+		/// </remarks>
+		public Vector3 TransformNormal(Vector3 normal) {
+			Contract.Requires<ArgumentException>(!normal.IsZero);
+			Contract.Ensures(!Contract.Result<Vector3>().IsZero);
+
+			Vector3 v1, v2;
+			GeometryHelper.FindPerpendicular(normal, out v1, out v2);
+			v1 = TransformVector(v1);
+			v2 = TransformVector(v2);
+			return v1.Cross(v2);
 
 		}
 

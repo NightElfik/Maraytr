@@ -17,7 +17,7 @@ namespace Maraytr.Numerics {
 
 
 		public static ColorRgbt operator +(ColorRgbt left, ColorRgbt right) {
-			return new ColorRgbt(left.R + right.R, left.G + right.G, left.B + right.B, left.T + right.T);
+			return new ColorRgbt(left.R + right.R, left.G + right.G, left.B + right.B, left.T * right.T);
 		}
 
 		public static ColorRgbt operator *(ColorRgbt left, ColorRgbt right) {
@@ -33,7 +33,9 @@ namespace Maraytr.Numerics {
 		}
 
 		public static readonly ColorRgbt Black = new ColorRgbt(0, 0, 0, 0);
-		
+
+
+		public bool IsZero { get { return R.IsAlmostZero() && G.IsAlmostZero() && B.IsAlmostZero() && T.IsAlmostZero(); } }
 
 	}
 }

@@ -7,28 +7,28 @@ namespace Maraytr.RayCasting {
 	public class Intersection : IComparable<Intersection> {
 
 
-		public readonly IIntersectableObject IntersectedObject;
+		public IIntersectableObject IntersectedObject;
 
-		public readonly Ray Ray;
+		public Ray Ray;
 
 		/// <summary>
 		/// Parameter T of ray (giving position of intersection).
 		/// </summary>
-		public readonly double RayParameter;
+		public double RayParameter;
 
 		/// <summary>
 		/// Position in world coordinates.
 		/// </summary>
-		public readonly Vector3 Position;
+		public Vector3 Position;
 
 		/// <summary>
 		/// Signed distance (squared) to ray origin (minus means behind ray).
 		/// </summary>
-		public readonly double RayDistanceSqSigned;
+		public double RayDistanceSqSigned;
 
 		/// <summary>
 		/// True if ray enters the object with this intersection.
-		/// Flase if leaves.
+		/// Flase if it leaves.
 		/// </summary>
 		public bool IsEnter;
 
@@ -38,17 +38,17 @@ namespace Maraytr.RayCasting {
 
 		public Vector2 TextureCoord;
 
-		public object AdditionalData;
+		public IMaterial Material;
 
+		public object AdditionalData;
+		
 
 		public Intersection(IIntersectableObject intersectedObject, bool isEnter, Ray localRay, double rayParameter,
-				Vector3 worldsPos, double rayDistSqSgn, object additionalData = null) {
+				object additionalData = null) {
 			IntersectedObject = intersectedObject;
 			IsEnter = isEnter;
 			Ray = localRay;
 			RayParameter = rayParameter;
-			Position = worldsPos;
-			RayDistanceSqSigned = rayDistSqSgn;
 			InverseNormal = false;
 			AdditionalData = additionalData;
 		}

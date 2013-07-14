@@ -1,22 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Maraytr.Materials;
 using Maraytr.Numerics;
 using Maraytr.RayCasting;
 
 namespace Maraytr.Scenes.Csg.Primitives {
-	public class CsgSphere : CsgNode, IIntersectableObject {
-
-		private Matrix4Affine transformToWorld;
-
-
-		public IMaterial Material { get; set; }
-
-		public override void PrecomputeWorldTransform(Matrix4Affine worldTransform) {
-			transformToWorld = worldTransform;
-		}
-
-		public override void Intersect(Ray ray, ICollection<Intersection> outIntersections) {
+	public class Sphere : IIntersectableObject {
+				
+		public int Intersect(Ray ray, ICollection<Intersection> outIntersections) {
 
 			// Sphere with center c and radius r: |x - c|^2 = r^2
 			// Ray width start s and direction d (normalized): x = s + t d
@@ -41,29 +33,25 @@ namespace Maraytr.Scenes.Csg.Primitives {
 
 			double discrOver4 = sd * sd - ss + 1;
 			if (discrOver4 <= 0.0 || discrOver4.IsAlmostZero()) {
-				return;  // 0 or 1 solution, but we want two
+				return 0;  // 0 or 1 solution, but we want two.
 			}
 
 			double discrOver4Sqrt = Math.Sqrt(discrOver4);
 			double tEnter = -sd - discrOver4Sqrt;
 			double tLeave = -sd + discrOver4Sqrt;
 
-			Vector3 enterPosWorld = transformToWorld.Transform(ray.StartPoint + tEnter * ray.Direction);
-			Vector3 leavePosWorld = transformToWorld.Transform(ray.StartPoint + tLeave * ray.Direction);
-			
-			double enterDistSqSgn = (enterPosWorld - ray.RayWorldCoords.StartPoint).LengthSquared * (tEnter >= 0.0 ? 1 : -1);
-			double leaveDistSqSgn = (leavePosWorld - ray.RayWorldCoords.StartPoint).LengthSquared * (tLeave >= 0.0 ? 1 : -1);
+			Debug.Assert(tEnter < tLeave);
 
-			outIntersections.Add(new Intersection(this, true, ray, tEnter, enterPosWorld, enterDistSqSgn));
-			outIntersections.Add(new Intersection(this, false, ray, tLeave, leavePosWorld, leaveDistSqSgn));
-
+			outIntersections.Add(new Intersection(this, true, ray, tEnter));
+			outIntersections.Add(new Intersection(this, false, ray, tLeave));
+			return 2;
 		}
 
 		public void CompleteIntersection(Intersection intersection) {
-			
-			Vector3 localIntPt = intersection.Ray.StartPoint + intersection.RayParameter * intersection.Ray.Direction;
 
-			intersection.Normal = GeometryHelper.TransformNormal(localIntPt, transformToWorld);
+			Vector3 localIntPt = intersection.LocalIntersectionPt;
+
+			intersection.Normal = localIntPt;
 
 			intersection.TextureCoord.X = Math.Atan2(localIntPt.Z, localIntPt.X) / (2.0 * Math.PI) + 0.5;
 			intersection.TextureCoord.Y = Math.Atan2(1, localIntPt.Y) / Math.PI;
