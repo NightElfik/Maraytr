@@ -5,7 +5,7 @@ using Maraytr.Materials;
 using Maraytr.Numerics;
 using Maraytr.RayCasting;
 
-namespace Maraytr.Scenes.Csg.Primitives {
+namespace Maraytr.Primitives {
 	public class Sphere : IIntersectableObject {
 				
 		public int Intersect(Ray ray, ICollection<Intersection> outIntersections) {

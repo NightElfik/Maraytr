@@ -33,7 +33,7 @@ namespace Maraytr.Scenes.Csg {
 			for (int i = 0; i < isecCount; ++i) {
 				var isec = tempIntersections[i];
 				isec.IntersectedObject = this;
-				isec.Position = transformToWorld.Transform(ray.StartPoint + isec.RayParameter * ray.Direction);
+				isec.Position = transformToWorld.Transform(ray.GetPointAt(isec.RayParameter));
 				isec.RayDistanceSqSigned = (isec.Position - ray.RayWorldCoords.StartPoint).LengthSquared * (isec.RayParameter >= 0.0 ? 1 : -1);
 				outIntersections.Add(isec);
 			}

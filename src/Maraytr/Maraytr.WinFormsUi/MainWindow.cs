@@ -8,12 +8,12 @@ using Maraytr.Lights;
 using Maraytr.Materials;
 using Maraytr.Materials.Textures;
 using Maraytr.Numerics;
+using Maraytr.Primitives;
 using Maraytr.RayCasting;
 using Maraytr.RayTracing;
 using Maraytr.Rendering;
 using Maraytr.Scenes;
 using Maraytr.Scenes.Csg;
-using Maraytr.Scenes.Csg.Primitives;
 
 namespace Maraytr.WinFormsUi {
 	public partial class frmMainWindow : Form {
@@ -32,10 +32,10 @@ namespace Maraytr.WinFormsUi {
 
 			var scene = new Scene();
 			scene.BgColor = new ColorRgbt(0, 0, 0, 1);
-			scene.Camera = new PerspectiveCamera(new Vector3(0, 1, 6), new Vector3(0, 0, 0), new Vector3(0, 6, -1), 640, 480, 90);
-			scene.AmbientLight = new ColorRgbt(0.05f, 0.05f, 0.05f);
-			//scene.Lights.Add(new PointLight(new Vector3(0, 6, 3), new ColorRgbt(1, 1, 1)));
-			scene.Lights.Add(new AreaLightSource(new Vector3(0, 6, 3), new ColorRgbt(1, 1, 1), Vector3.ZAxis, Vector3.XAxis));
+			scene.Camera = new PerspectiveCamera(new Vector3(1.8, 2.1, 6), new Vector3(1.4, 1.4, 1.5), new Vector3(0, 1, 0), 640, 480, 90);
+			scene.AmbientLight = new ColorRgbt(0.1f, 0.1f, 0.1f);
+			scene.Lights.Add(new PointLight(new Vector3(2, 7, 10), new ColorRgbt(1, 1, 1)));
+			//scene.Lights.Add(new AreaLightSource(new Vector3(2, 7, 10), new ColorRgbt(1, 1, 1), Vector3.ZAxis, Vector3.XAxis));
 
 			var cube1 = new CsgObjectNode(cube,
 				new PhongMaterial() {
@@ -130,10 +130,21 @@ namespace Maraytr.WinFormsUi {
 				* Matrix4Affine.CreateScale(new Vector3(4, 1.8, 1)));
 
 			var sceneRoot = new CsgBoolOperationNode(CsgBoolOperation.Union);
-			sceneRoot.AddChildNode(diff, Matrix4Affine.CreateIdentity());
+			/*sceneRoot.AddChildNode(diff, Matrix4Affine.CreateIdentity());
 			sceneRoot.AddChildNode(intersec, Matrix4Affine.CreateTranslation(new Vector3(0.8, 0, 3)) * Matrix4Affine.CreateScale(0.5));
 			sceneRoot.AddChildNode(mirror, Matrix4Affine.CreateTranslation(new Vector3(-2, 0, -2))
-				* Matrix4Affine.CreateRotationX(15 * MathHelper.DegToRad));
+				* Matrix4Affine.CreateRotationX(15 * MathHelper.DegToRad));*/
+
+			var mengerSponge = new CsgObjectNode(new MengerSponge() {
+					IterationsCount = 3
+				},
+				new PhongMaterial() {
+					BaseColor = new ColorRgbt(1, 1, 1),
+					DiffuseReflectionCoef = new ColorRgbt(1, 1, 1),
+					SpecularReflectionCoef = new ColorRgbt(0, 0, 0),
+				});
+			sceneRoot.AddChildNode(mengerSponge, Matrix4Affine.CreateIdentity());
+			sceneRoot.AddChildNode(plane1, Matrix4Affine.CreateTranslation(new Vector3(0, 0, 0)));
 
 			sceneRoot.PrecomputeWorldTransform(Matrix4Affine.CreateIdentity());
 			scene.SceneRoot = sceneRoot;
@@ -142,7 +153,8 @@ namespace Maraytr.WinFormsUi {
 
 			rayTracer = new RayTracer(scene) {
 				MaxTraceDepth = 16,
-				MinContribution = 0.01
+				MinContribution = 0.01,
+				CountShadows = false,
 			};
 
 
@@ -209,6 +221,14 @@ namespace Maraytr.WinFormsUi {
 		private void pbImage_MouseMove(object sender, MouseEventArgs e) {
 			Bitmap img = pbImage.Image as Bitmap;
 			Text = string.Format("{0}  {1}  #{2}", e.X, e.Y, img != null ? Convert.ToString(img.GetPixel(e.X, e.Y).ToArgb(), 16) : "??");
+
+			if (rayTracer != null && img != null) {
+				try {
+					var isec = rayTracer.GetIntersectionAt(e.X, img.Height - e.Y);
+					tsslStatus.Text = "Distance: " + (Math.Sqrt(Math.Abs(isec.RayDistanceSqSigned)) * Math.Sign(isec.RayDistanceSqSigned)).ToString();
+				}
+				catch { }
+			}
 		}
 
 		private void btnSave_Click(object sender, EventArgs e) {

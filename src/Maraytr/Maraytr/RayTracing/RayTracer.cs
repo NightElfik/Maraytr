@@ -27,7 +27,7 @@ namespace Maraytr.RayTracing {
 			return traceRay(ray, intState, 0, 1);
 
 		}
-
+		
 
 		protected ColorRgbt traceRay(Ray ray, IntegrationState intState, int depth, double contribution) {
 

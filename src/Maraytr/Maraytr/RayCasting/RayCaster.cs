@@ -14,8 +14,14 @@ namespace Maraytr.RayCasting {
 			this.scene = scene;
 		}
 
+		public bool CountShadows { get; set; }
 
 		public Size Size { get { return scene.Camera.Size; } }
+
+		public bool CountAmbientOcclusion { get; set; }
+
+		public int AmbientOcclusionSamplesCount { get; set; }
+
 		
 		public virtual ColorRgbt GetSample(double x, double y, IntegrationState intState) {
 
@@ -30,7 +36,10 @@ namespace Maraytr.RayCasting {
 			}
 
 			return evaluateIntersection(isec, intState);
+		}
 
+		public Intersection GetIntersectionAt(double x, double y) {
+			return getIntersection(scene.Camera.GetRay(x, y));
 		}
 
 		protected Intersection getIntersection(Ray ray) {
@@ -57,14 +66,19 @@ namespace Maraytr.RayCasting {
 
 		protected ColorRgbt evaluateIntersection(Intersection intersec, IntegrationState intState) {
 
-
 			intersec.CompleteIntersection();
 
 			Vector3 viewerDirection = -intersec.Ray.RayWorldCoords.Direction;
 			Vector3 intersecPos = intersec.Position;
-			Vector3 surfaceNormal = intersec.Normal * (intersec.InverseNormal ? -1 : 1);
+			Vector3 surfaceNormal = intersec.Normal;
+			if (intersec.InverseNormal) {
+				intersec.Normal *= -1.0;
+			}
 			surfaceNormal.NormalizeThis();
 
+			if (CountAmbientOcclusion) {
+
+			}
 
 			var mat = intersec.Material;
 			ColorRgbt baseColor = mat.Texture == null
@@ -76,7 +90,7 @@ namespace Maraytr.RayCasting {
 
 				Vector3 lightPos = lightSource.GetPosition(intState);
 
-				if (!isPointDirectlyVisibleFrom(intersecPos, lightPos)) {
+				if (CountShadows && !isPointDirectlyVisibleFrom(intersecPos, lightPos)) {
 					continue;
 				}
 

@@ -28,7 +28,7 @@ namespace Maraytr.RayCasting {
 
 		/// <summary>
 		/// True if ray enters the object with this intersection.
-		/// Flase if it leaves.
+		/// False if it leaves.
 		/// </summary>
 		public bool IsEnter;
 
@@ -53,7 +53,7 @@ namespace Maraytr.RayCasting {
 			AdditionalData = additionalData;
 		}
 
-		public Vector3 LocalIntersectionPt { get { return Ray.StartPoint + RayParameter * Ray.Direction; } } 
+		public Vector3 LocalIntersectionPt { get { return Ray.GetPointAt(RayParameter); } } 
 
 		public void CompleteIntersection() {
 			IntersectedObject.CompleteIntersection(this);

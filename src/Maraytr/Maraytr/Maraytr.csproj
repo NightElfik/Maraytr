@@ -125,6 +125,7 @@
     <Compile Include="Numerics\ColorRgbt.cs" />
     <Compile Include="Numerics\Vector2.cs" />
     <Compile Include="Numerics\Size.cs" />
+    <Compile Include="Primitives\MengerSponge.cs" />
     <Compile Include="RayTracing\RayTracer.cs" />
     <Compile Include="Rendering\IImageFunction.cs" />
     <Compile Include="RayCasting\IIntersectable.cs" />
@@ -146,9 +147,7 @@
     <Compile Include="Scenes\Csg\CsgObjectNode.cs" />
     <Compile Include="Scenes\Scene.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Geometry\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

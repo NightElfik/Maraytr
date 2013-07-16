@@ -28,6 +28,10 @@ namespace Maraytr.RayCasting {
 			RayWorldCoords = rayWorldCoords;
 		}
 
+		public Vector3 GetPointAt(double t) {
+			return StartPoint + t * Direction;
+		}
+
 		/// <summary>
 		/// Transforms this ray by given transformation returning new instance of transformed ray.
 		/// </summary>

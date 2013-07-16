@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
 namespace Maraytr.Numerics {
@@ -13,6 +14,25 @@ namespace Maraytr.Numerics {
 			X = x;
 			Y = y;
 			Z = z;
+		}
+
+		public double this[int i] {
+			get {
+				switch (i) {
+					case 0: return X;
+					case 1: return Y;
+					case 2: return Z;
+					default: throw new ArgumentException("Invalid index " + i + " while getting 3D vector.");
+				}
+			}
+			set {
+				switch (i) {
+					case 0: X = value; break;
+					case 1: Y = value; break;
+					case 2: Z = value; break;
+					default: throw new ArgumentException("Invalid index " + i + " while setting 3D vector."); break;
+				}
+			}
 		}
 
 		public static Vector3 operator -(Vector3 v) {
@@ -39,7 +59,7 @@ namespace Maraytr.Numerics {
 		public static readonly Vector3 XAxis = new Vector3(1, 0, 0);
 		public static readonly Vector3 YAxis = new Vector3(0, 1, 0);
 		public static readonly Vector3 ZAxis = new Vector3(0, 0, 1);
-		public static readonly Vector3 PositiveInfinity =new Vector3(double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity);
+		public static readonly Vector3 PositiveInfinity = new Vector3(double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity);
 		public static readonly Vector3 NegativeInfinity = new Vector3(double.NegativeInfinity, double.NegativeInfinity, double.NegativeInfinity);
 
 

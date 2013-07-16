@@ -121,11 +121,14 @@
   <data name="pbImage.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADr4AAA6+AepCscAAAAAkSURBVDhPY5iJA6ThAAyjGpBCgHqhhMskXMHNMKoBKQSo
-        FkoA2Vd+kNlrdosAAAAASUVORK5CYII=
+        YQUAAAAJcEhZcwAADrwAAA68AZW8ckkAAAArSURBVDhPY5iJA6ThAKMakAFUHgOQrgFKYwCoPgwwqgEZ
+        QOUxAIkaZs4EANlXfpA0HMviAAAAAElFTkSuQmCC
 </value>
   </data>
   <metadata name="saveFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
+  </metadata>
+  <metadata name="statusStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>146, 17</value>
   </metadata>
 </root>
