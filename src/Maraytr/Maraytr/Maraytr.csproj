@@ -123,6 +123,9 @@
     <Compile Include="Materials\Textures\StripsTexture.cs" />
     <Compile Include="Materials\Textures\ITexture.cs" />
     <Compile Include="Numerics\ColorRgbt.cs" />
+    <Compile Include="Numerics\Point2.cs" />
+    <Compile Include="Numerics\SpiralIndexer.cs" />
+    <Compile Include="Numerics\UniformSphericalRandom.cs" />
     <Compile Include="Numerics\Vector2.cs" />
     <Compile Include="Numerics\Size.cs" />
     <Compile Include="Primitives\MengerSponge.cs" />

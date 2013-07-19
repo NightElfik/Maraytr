@@ -34,11 +34,12 @@ namespace Maraytr.Primitives {
 
 				int prevCoordIndex = (planeCoordIndex + 2) % 3;
 				int nextCoordIndex = (planeCoordIndex + 1) % 3;
+				double epsilon = FloatArithmeticUtils.DBL_EPSILON * iteration;
 
 				for (int planePosition = 0; planePosition < 4; ++planePosition) {
 					// Intersection with x/y/z plane.
 					double t = (planePosition - ray.StartPoint[planeCoordIndex]) / ray.Direction[planeCoordIndex];
-					if (t <= 0.0 || t.IsAlmostZero()) {
+					if (t <= 0.0 || t < epsilon) {
 						continue;  // Not interesting intersection.
 					}
 

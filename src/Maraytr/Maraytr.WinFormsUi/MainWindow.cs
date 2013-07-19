@@ -20,7 +20,7 @@ namespace Maraytr.WinFormsUi {
 
 		private RayTracer rayTracer;
 
-
+		
 		public frmMainWindow() {
 			InitializeComponent();
 
@@ -32,7 +32,8 @@ namespace Maraytr.WinFormsUi {
 
 			var scene = new Scene();
 			scene.BgColor = new ColorRgbt(0, 0, 0, 1);
-			scene.Camera = new PerspectiveCamera(new Vector3(1.8, 2.1, 6), new Vector3(1.4, 1.4, 1.5), new Vector3(0, 1, 0), 640, 480, 90);
+			//scene.Camera = new PerspectiveCamera(new Vector3(1.8, 2.1, 8), new Vector3(1.4, 1.3, 1.5), new Vector3(0, 1, 0), 640, 480, 90);
+			scene.Camera = new PerspectiveCamera(new Vector3(1.015, 1.2, 3.1), new Vector3(1.4, 1.4, 1.5), new Vector3(0, 1, 0), 1920, 1200, 90);	
 			scene.AmbientLight = new ColorRgbt(0.1f, 0.1f, 0.1f);
 			scene.Lights.Add(new PointLight(new Vector3(2, 7, 10), new ColorRgbt(1, 1, 1)));
 			//scene.Lights.Add(new AreaLightSource(new Vector3(2, 7, 10), new ColorRgbt(1, 1, 1), Vector3.ZAxis, Vector3.XAxis));
@@ -136,12 +137,13 @@ namespace Maraytr.WinFormsUi {
 				* Matrix4Affine.CreateRotationX(15 * MathHelper.DegToRad));*/
 
 			var mengerSponge = new CsgObjectNode(new MengerSponge() {
-					IterationsCount = 3
+					IterationsCount = 9
 				},
 				new PhongMaterial() {
 					BaseColor = new ColorRgbt(1, 1, 1),
 					DiffuseReflectionCoef = new ColorRgbt(1, 1, 1),
 					SpecularReflectionCoef = new ColorRgbt(0, 0, 0),
+					//ReflectionFactor = 0.5f,
 				});
 			sceneRoot.AddChildNode(mengerSponge, Matrix4Affine.CreateIdentity());
 			sceneRoot.AddChildNode(plane1, Matrix4Affine.CreateTranslation(new Vector3(0, 0, 0)));
@@ -155,6 +157,10 @@ namespace Maraytr.WinFormsUi {
 				MaxTraceDepth = 16,
 				MinContribution = 0.01,
 				CountShadows = false,
+				//ShowNormals = true,
+				CountAmbientOcclusion = true,
+				AmbientOcclusionSamplesCount = 1 << 10,
+				AmbientOcclusionOnly = true,
 			};
 
 
@@ -170,7 +176,7 @@ namespace Maraytr.WinFormsUi {
 			//rayTracer.GetSample(550, height - 300, new IntegrationState());
 
 			var resultArr = new ColorRgbt[height, width];
-			var ssif = new SupersamplingImageFunction(rayTracer) { SuperSampling = 1 };
+			var ssif = new SupersamplingImageFunction(rayTracer) { SuperSampling = 8 };
 			var pff = new ParalellImageFuncFetcher(ssif);
 			var asyncResult = pff.FetchAsync(resultArr);
 
@@ -224,8 +230,8 @@ namespace Maraytr.WinFormsUi {
 
 			if (rayTracer != null && img != null) {
 				try {
-					var isec = rayTracer.GetIntersectionAt(e.X, img.Height - e.Y);
-					tsslStatus.Text = "Distance: " + (Math.Sqrt(Math.Abs(isec.RayDistanceSqSigned)) * Math.Sign(isec.RayDistanceSqSigned)).ToString();
+					//var isec = rayTracer.GetIntersectionAt(e.X, img.Height - e.Y);
+					//tsslStatus.Text = "Distance: " + (Math.Sqrt(Math.Abs(isec.RayDistanceSqSigned)) * Math.Sign(isec.RayDistanceSqSigned)).ToString();
 				}
 				catch { }
 			}
@@ -244,7 +250,7 @@ namespace Maraytr.WinFormsUi {
 		}
 
 		private void pbImage_MouseClick(object sender, MouseEventArgs e) {
-			rayTracer.GetSample(e.X, (int)rayTracer.Size.Height - e.Y, new IntegrationState());
+			rayTracer.GetSample(e.X, (int)rayTracer.Size.Height - e.Y, new IntegrationState(1, 1));
 		}
 
 	}

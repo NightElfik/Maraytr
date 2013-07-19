@@ -14,7 +14,7 @@ namespace Maraytr {
 		/// <param name="p2">Second vector perpendicular to p.</param>
 		public static void FindPerpendicular(Vector3 v, out Vector3 p1, out Vector3 p2) {
 
-			Contract.Requires<ArgumentException>(!v.IsZero);
+			Contract.Requires<ArgumentException>(!v.IsAlmostZero);
 			Contract.Ensures(Contract.ValueAtReturn(out p1).Cross(Contract.ValueAtReturn(out p2)).HasSameDirectionAs(v));
 
 			double ax = Math.Abs(v.X);

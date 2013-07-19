@@ -139,10 +139,50 @@ namespace Maraytr.Numerics {
 			var m = new Matrix4Affine();
 			m.M11 = 1;
 			m.M22 = cos;
-			m.M23 = -sin;
-			m.M32 = sin;
+			m.M23 = sin;
+			m.M32 = -sin;
 			m.M33 = cos;
 			return m;
+		}
+
+		public static Matrix4Affine CreateRotationAngleAxis(double angle, Vector3 axis) {
+			Contract.Requires(axis.IsNormalized);
+
+			double cos = Math.Cos(angle);
+			double iCos = 1 - cos;
+			double sin = Math.Sin(angle);
+			var m = new Matrix4Affine();
+			
+			m.M11 = axis.X * axis.X * iCos + cos;
+			m.M12 = axis.X * axis.Y * iCos + axis.Z * sin;
+			m.M13 = axis.X * axis.Z * iCos - axis.Y * sin;
+
+			m.M21 = axis.X * axis.Y * iCos - axis.Z * sin;
+			m.M22 = axis.Y * axis.Y * iCos + cos;
+			m.M23 = axis.Y * axis.Z * iCos + axis.X * sin;
+
+			m.M31 = axis.X * axis.Z * iCos + axis.Y * sin;
+			m.M32 = axis.Y * axis.Z * iCos - axis.X * sin;
+			m.M33 = axis.Z * axis.Z * iCos + cos;
+
+			return m;
+		}
+
+		public static Matrix4Affine CreateRotationVectorToVector(Vector3 originalDirection, Vector3 desiredDirection) {
+
+			Vector3 axis = desiredDirection.Cross(originalDirection);
+			if (axis.IsAlmostZero) {
+				if (originalDirection.Dot(desiredDirection) > 0) {
+					return CreateIdentity();
+				}
+				else {
+					return CreateScale(-1);
+				}
+			}
+
+			double angle = originalDirection.AngleTo(desiredDirection);
+			axis.NormalizeThis();
+			return CreateRotationAngleAxis(angle, axis);
 		}
 
 		#endregion
@@ -384,8 +424,8 @@ namespace Maraytr.Numerics {
 		/// But we can apply transformation to tangent vectors.
 		/// </remarks>
 		public Vector3 TransformNormal(Vector3 normal) {
-			Contract.Requires<ArgumentException>(!normal.IsZero);
-			Contract.Ensures(!Contract.Result<Vector3>().IsZero);
+			Contract.Requires<ArgumentException>(!normal.IsAlmostZero);
+			Contract.Ensures(!Contract.Result<Vector3>().IsAlmostZero);
 
 			Vector3 v1, v2;
 			GeometryHelper.FindPerpendicular(normal, out v1, out v2);

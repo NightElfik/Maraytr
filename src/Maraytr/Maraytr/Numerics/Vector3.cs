@@ -68,18 +68,18 @@ namespace Maraytr.Numerics {
 
 		public bool IsNormalized { get { return LengthSquared.IsAlmostEqualTo(1.0); } }
 
-		public bool IsZero { get { return LengthSquared.IsAlmostZero(); } }
+		public bool IsAlmostZero { get { return LengthSquared.IsAlmostZero(); } }
 
 
 		public Vector3 Normalize() {
-			Contract.Requires<InvalidOperationException>(!IsZero);
+			Contract.Requires<InvalidOperationException>(!IsAlmostZero);
 
 			double length = Math.Sqrt(X * X + Y * Y + Z * Z);
 			return new Vector3(X / length, Y / length, Z / length);
 		}
 
 		public void NormalizeThis() {
-			Contract.Requires<InvalidOperationException>(!IsZero);
+			Contract.Requires<InvalidOperationException>(!IsAlmostZero);
 
 			double length = Math.Sqrt(X * X + Y * Y + Z * Z);
 			X /= length;
@@ -88,7 +88,7 @@ namespace Maraytr.Numerics {
 		}
 
 		public bool HasSameDirectionAs(Vector3 v) {
-			if (IsZero || v.IsZero) {
+			if (IsAlmostZero || v.IsAlmostZero) {
 				return false;
 			}
 
@@ -98,9 +98,14 @@ namespace Maraytr.Numerics {
 		public double Dot(Vector3 v) {
 			return X * v.X + Y * v.Y + Z * v.Z;
 		}
-
+		
 		public Vector3 Cross(Vector3 v) {
 			return new Vector3(Y * v.Z - Z * v.Y, Z * v.X - X * v.Z, X * v.Y - Y * v.X);
+		}
+
+		public double AngleTo(Vector3 v) {
+			var normalizedDot = Dot(v) / Math.Sqrt(LengthSquared * v.LengthSquared);
+			return Math.Acos(normalizedDot.Clamp(-1, 1));
 		}
 
 	}

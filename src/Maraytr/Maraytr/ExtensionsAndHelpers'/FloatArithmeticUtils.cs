@@ -4,7 +4,7 @@ using Maraytr.Numerics;
 namespace Maraytr {
 	public static class FloatArithmeticUtils {
 
-		public const double DBL_EPSILON = 1E-06;
+		public const double DBL_EPSILON = 1E-08;
 		public const float SGL_EPSILON = 1E-04f;
 
 

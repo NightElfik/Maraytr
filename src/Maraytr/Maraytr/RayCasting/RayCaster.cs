@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Maraytr.Lights;
 using Maraytr.Numerics;
 using Maraytr.Rendering;
@@ -9,16 +10,27 @@ namespace Maraytr.RayCasting {
 
 		protected Scene scene;
 
+		static Vector3[] aoCache = new Vector3[1 << 14];
+
 
 		public RayCaster(Scene scene) {
 			this.scene = scene;
+			var sphericalRandom = new UniformSphericalRandom();
+
+			for (int i = 0; i < aoCache.Length; ++i) {
+				aoCache[i] = sphericalRandom.NextFromHemisphere();
+			}
 		}
 
 		public bool CountShadows { get; set; }
 
 		public Size Size { get { return scene.Camera.Size; } }
 
+		public bool ShowNormals { get; set; }
+
 		public bool CountAmbientOcclusion { get; set; }
+
+		public bool AmbientOcclusionOnly { get; set; }
 
 		public int AmbientOcclusionSamplesCount { get; set; }
 
@@ -76,15 +88,29 @@ namespace Maraytr.RayCasting {
 			}
 			surfaceNormal.NormalizeThis();
 
-			if (CountAmbientOcclusion) {
-
+			if (ShowNormals) {
+				return new ColorRgbt((float)(1 + surfaceNormal.X) / 2, (float)(1 + surfaceNormal.Y) / 2, (float)(1 + surfaceNormal.Z) / 2);
 			}
 
 			var mat = intersec.Material;
 			ColorRgbt baseColor = mat.Texture == null
 				? mat.BaseColor
 				: mat.Texture.GetColorAt(intersec.TextureCoord) * mat.BaseColor;
+
+			if (CountAmbientOcclusion) {
+				int totalSamplesCount = 1 + AmbientOcclusionSamplesCount / (intState.StepsCountSqrt * intState.StepsCountSqrt);
+				int samplesHit = countAmbientOcclusion(intersecPos, surfaceNormal, totalSamplesCount, intState.CurrentStep * totalSamplesCount);
+				float occlusion = (float)samplesHit / totalSamplesCount;
+				//occlusion = (float)Math.Sin(occlusion * Math.PI / 2);
+
+				baseColor *= occlusion;
+				if (AmbientOcclusionOnly) {
+					return baseColor;
+				}
+			}
+
 			ColorRgbt totalColor = scene.AmbientLight * baseColor;
+
 			
 			foreach (var lightSource in scene.Lights) {
 
@@ -107,6 +133,23 @@ namespace Maraytr.RayCasting {
 			return totalColor;
 		}
 
+		int countAmbientOcclusion(Vector3 point, Vector3 normal, int samplesCount, int startIndex) {
+
+			var rotationMatrix = Matrix4Affine.CreateRotationVectorToVector(Vector3.XAxis, normal);
+			int samplesHit = 0;
+			//var sphericalRandom = new UniformSphericalRandom();
+
+			for (int i = 0; i < samplesCount; ++i) {
+				Vector3 randomSample = aoCache[startIndex + i];// sphericalRandom.NextFromHemisphere();
+				var ray = new Ray(point, rotationMatrix.TransformVector(randomSample));
+				if (hasNoPositiveIntersection(ray)) {
+					++samplesHit;
+				}
+			}
+
+			return samplesHit;
+		}
+
 		private bool isPointDirectlyVisibleFrom(Vector3 startPt, Vector3 pt) {
 
 			var ray = new Ray(startPt, (pt - startPt).Normalize());
@@ -122,6 +165,24 @@ namespace Maraytr.RayCasting {
 
 			foreach (var iSec in intersections) {
 				if (iSec.RayDistanceSqSigned.IsEpsilonGreaterThanZero() && iSec.RayDistanceSqSigned < ptDistSq) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		private bool hasNoPositiveIntersection(Ray ray) {
+			
+			var intersections = new List<Intersection>();
+			scene.SceneRoot.Intersect(ray, intersections);
+
+			if (intersections.Count == 0) {
+				return true;
+			}
+			
+			foreach (var iSec in intersections) {
+				if (iSec.RayDistanceSqSigned.IsEpsilonGreaterThanZero()) {
 					return false;
 				}
 			}
