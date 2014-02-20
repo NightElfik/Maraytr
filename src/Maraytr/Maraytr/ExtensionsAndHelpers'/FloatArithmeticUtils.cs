@@ -4,7 +4,7 @@ using Maraytr.Numerics;
 namespace Maraytr {
 	public static class FloatArithmeticUtils {
 
-		public const double DBL_EPSILON = 1E-08;
+		public const double DBL_EPSILON = 1E-10;
 		public const float SGL_EPSILON = 1E-04f;
 
 
@@ -70,14 +70,14 @@ namespace Maraytr {
 
 		}
 
-		public static bool IsEpsilonGreaterThanZero(this double value) {
-			return value > DBL_EPSILON;
-		}
-
 		public static bool IsAlmostEqualTo(this Vector3 v1, Vector3 v2) {
 
 			return v1.X.IsAlmostEqualTo(v2.X) && v1.Y.IsAlmostEqualTo(v2.Y) && v1.Z.IsAlmostEqualTo(v2.Z);
 
+		}
+
+		public static bool IsEpsilonGreaterThanZero(this double value) {
+			return value > DBL_EPSILON;
 		}
 
 

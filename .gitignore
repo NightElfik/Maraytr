@@ -1,6 +1,7 @@
 
 # rubbish
 /backup
+*.png
 
 # .NET rubbish
 *.suo
@@ -9,6 +10,7 @@
 bin/
 obj/
 
+/math/*
 /src/Maraytr/TestResults
 
 # Windows rubbish
