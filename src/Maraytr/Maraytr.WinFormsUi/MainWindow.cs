@@ -20,7 +20,7 @@ namespace Maraytr.WinFormsUi {
 
 		private RayTracer rayTracer;
 
-		
+
 		public frmMainWindow() {
 			InitializeComponent();
 
@@ -31,13 +31,14 @@ namespace Maraytr.WinFormsUi {
 			};
 
 			var scene = new Scene();
-			scene.BgColor = new ColorRgbt(1, 1, 1, 0);
-			scene.Camera = new PerspectiveCamera(new Vector3(1.8, 2.1, 8), new Vector3(1.4, 1.3, 1.5), new Vector3(0, 1, 0), 640, 480, 90);
+			scene.BgColor = new ColorRgbt(0, 0, 0, 0);
+			scene.Camera = new PerspectiveCamera(new Vector3(0, 1, 6), new Vector3(0, 0, 0), new Vector3(0, 6, -1), 640, 480, 90);
+			//scene.Camera = new PerspectiveCamera(new Vector3(1.8, 2.1, 8), new Vector3(1.4, 1.3, 1.5), new Vector3(0, 1, 0), 640, 480, 90);
 			//scene.Camera = new PerspectiveCamera(new Vector3(1.015, 1.2, 3.1), new Vector3(1.4, 1.4, 1.5), new Vector3(0, 1, 0), 1920, 1200, 90);
 			//scene.Camera = new PerspectiveCamera(new Vector3(1.015, 1.2, 3.1), new Vector3(1.4, 1.4, 1.5), new Vector3(0, 1, 0), 2560, 1600, 90);
 			scene.AmbientLight = new ColorRgbt(0.1f, 0.1f, 0.1f);
-			scene.Lights.Add(new PointLight(new Vector3(2, 7, 10), new ColorRgbt(1, 1, 1)));
-			//scene.Lights.Add(new AreaLightSource(new Vector3(2, 7, 10), new ColorRgbt(1, 1, 1), Vector3.ZAxis, Vector3.XAxis));
+			//scene.Lights.Add(new PointLight(new Vector3(2, 7, 10), new ColorRgbt(1, 1, 1)));
+			scene.Lights.Add(new AreaLightSource(new Vector3(2, 7, 10), new ColorRgbt(1, 1, 1), Vector3.ZAxis, Vector3.XAxis));
 
 			var cube1 = new CsgObjectNode(cube,
 				new PhongMaterial() {
@@ -132,21 +133,23 @@ namespace Maraytr.WinFormsUi {
 				* Matrix4Affine.CreateScale(new Vector3(4, 1.8, 1)));
 
 			var sceneRoot = new CsgBoolOperationNode(CsgBoolOperation.Union);
-			/*sceneRoot.AddChildNode(diff, Matrix4Affine.CreateIdentity());
+			sceneRoot.AddChildNode(diff, Matrix4Affine.CreateIdentity());
 			sceneRoot.AddChildNode(intersec, Matrix4Affine.CreateTranslation(new Vector3(0.8, 0, 3)) * Matrix4Affine.CreateScale(0.5));
 			sceneRoot.AddChildNode(mirror, Matrix4Affine.CreateTranslation(new Vector3(-2, 0, -2))
-				* Matrix4Affine.CreateRotationX(15 * MathHelper.DegToRad));*/
+				* Matrix4Affine.CreateRotationX(-15 * MathHelper.DegToRad));
 
-			var mengerSponge = new CsgObjectNode(new MengerSponge() {
-					IterationsCount = 2
-				},
-				new PhongMaterial() {
-					BaseColor = new ColorRgbt(1, 1, 1),
-					DiffuseReflectionCoef = new ColorRgbt(1, 1, 1),
-					SpecularReflectionCoef = new ColorRgbt(0, 0, 0),
-					ReflectionFactor = 0.5f,
-				});
-			sceneRoot.AddChildNode(mengerSponge, Matrix4Affine.CreateIdentity());
+			//var mengerSponge = new CsgObjectNode(new MengerSponge() {
+			//		IterationsCount = 2
+			//	},
+			//	new PhongMaterial() {
+			//		BaseColor = new ColorRgbt(1, 1, 1),
+			//		DiffuseReflectionCoef = new ColorRgbt(1, 1, 1),
+			//		SpecularReflectionCoef = new ColorRgbt(0, 0, 0),
+			//		ReflectionFactor = 0.5f,
+			//	});
+			//sceneRoot.AddChildNode(mengerSponge, Matrix4Affine.CreateIdentity());
+
+
 			sceneRoot.PrecomputeWorldTransform(Matrix4Affine.CreateIdentity());
 			scene.SceneRoot = sceneRoot;
 
@@ -155,11 +158,11 @@ namespace Maraytr.WinFormsUi {
 			rayTracer = new RayTracer(scene) {
 				MaxTraceDepth = 16,
 				MinContribution = 0.01,
-				CountShadows = false,
+				CountShadows = true,
 				//ShowNormals = true,
-				CountAmbientOcclusion = true,
-				AmbientOcclusionSamplesCount = 1 << 1,
-				AmbientOcclusionOnly = true,
+				//CountAmbientOcclusion = true,
+				//AmbientOcclusionSamplesCount = 1 << 1,
+				//AmbientOcclusionOnly = true,
 			};
 
 
@@ -175,7 +178,7 @@ namespace Maraytr.WinFormsUi {
 			//rayTracer.GetSample(550, height - 300, new IntegrationState());
 
 			var resultArr = new ColorRgbt[height, width];
-			var ssif = new SupersamplingImageFunction(rayTracer) { SuperSampling = 1 };
+			var ssif = new SupersamplingImageFunction(rayTracer) { SuperSampling = 3 };
 			var pff = new ParalellImageFuncFetcher(ssif);
 			var asyncResult = pff.FetchAsync(resultArr);
 
@@ -186,13 +189,11 @@ namespace Maraytr.WinFormsUi {
 				copyResult(img, resultArr);
 				pbImage.Invalidate();
 				Application.DoEvents();
-				Thread.Sleep(200);
+				Thread.Sleep(500);
 			}
 
 			copyResult(img, resultArr);
 			pbImage.Invalidate();
-
-
 		}
 
 		private void copyResult(Bitmap img, ColorRgbt[,] colorArr) {
@@ -220,7 +221,6 @@ namespace Maraytr.WinFormsUi {
 			}
 
 			img.UnlockBits(imgData);
-
 		}
 
 		private void pbImage_MouseMove(object sender, MouseEventArgs e) {

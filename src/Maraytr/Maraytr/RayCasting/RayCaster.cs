@@ -10,7 +10,7 @@ namespace Maraytr.RayCasting {
 
 		protected Scene scene;
 
-		static Vector3[] aoCache = new Vector3[1 << 14];
+		private static Vector3[] aoCache = new Vector3[1 << 14];
 
 
 		public RayCaster(Scene scene) {
@@ -34,7 +34,7 @@ namespace Maraytr.RayCasting {
 
 		public int AmbientOcclusionSamplesCount { get; set; }
 
-		
+
 		public virtual ColorRgbt GetSample(double x, double y, IntegrationState intState) {
 
 			Ray ray = scene.Camera.GetRay(x, y);
@@ -55,7 +55,7 @@ namespace Maraytr.RayCasting {
 		}
 
 		protected Intersection getIntersection(Ray ray) {
-			
+
 			var intersections = new List<Intersection>();
 			scene.SceneRoot.Intersect(ray, intersections);
 
@@ -111,7 +111,7 @@ namespace Maraytr.RayCasting {
 
 			ColorRgbt totalColor = scene.AmbientLight * baseColor;
 
-			
+
 			foreach (var lightSource in scene.Lights) {
 
 				Vector3 lightPos = lightSource.GetPosition(intState);
@@ -133,7 +133,7 @@ namespace Maraytr.RayCasting {
 			return totalColor;
 		}
 
-		int countAmbientOcclusion(Vector3 point, Vector3 normal, int samplesCount, int startIndex) {
+		private int countAmbientOcclusion(Vector3 point, Vector3 normal, int samplesCount, int startIndex) {
 
 			var rotationMatrix = Matrix4Affine.CreateRotationVectorToVector(Vector3.XAxis, normal);
 			int samplesHit = 0;
@@ -173,14 +173,14 @@ namespace Maraytr.RayCasting {
 		}
 
 		private bool hasNoPositiveIntersection(Ray ray) {
-			
+
 			var intersections = new List<Intersection>();
 			scene.SceneRoot.Intersect(ray, intersections);
 
 			if (intersections.Count == 0) {
 				return true;
 			}
-			
+
 			foreach (var iSec in intersections) {
 				if (iSec.RayDistanceSqSigned.IsEpsilonGreaterThanZero()) {
 					return false;
