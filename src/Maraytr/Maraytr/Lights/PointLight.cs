@@ -13,8 +13,8 @@ namespace Maraytr.Lights {
 			position = pos;
 			emittedLight = light;
 		}
-		
-		
+
+
 		public Vector3 GetPosition(IntegrationState intState) {
 			return position;
 		}

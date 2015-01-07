@@ -31,6 +31,11 @@ namespace Maraytr.Rendering {
 		}
 
 		private void fetchImgFunc() {
+			//for (int y = 0; y < height; y++) {
+			//	for (int x = 0; x < width; x++) {
+			//		resultArray[y, x] = imgFunc.GetSample(x, y, new IntegrationState());
+			//	}
+			//}
 			Parallel.For(0, width * height, i => {
 				int x = i % width;
 				int y = i / width;

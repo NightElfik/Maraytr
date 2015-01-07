@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -51,6 +52,8 @@ namespace Maraytr.RayTracing {
 		}
 
 		protected Vector3 computeReflection(Vector3 normal, Vector3 direction) {
+			Contract.Requires(normal.LengthSquared.IsAlmostEqualTo(1));
+
 			double k = normal.Dot(direction);
 			return (k + k) * normal - direction;
 		}

@@ -108,6 +108,7 @@
   <ItemGroup>
     <Compile Include="Cameras\ICamera.cs" />
     <Compile Include="Cameras\PerspectiveCamera.cs" />
+    <Compile Include="DemoScenesFactory.cs" />
     <Compile Include="ExtensionsAndHelpers%27\FloatArithmeticUtils.cs" />
     <Compile Include="ExtensionsAndHelpers%27\GeometryHelper.cs" />
     <Compile Include="ExtensionsAndHelpers%27\MathHelper.cs" />
@@ -118,8 +119,8 @@
     <Compile Include="Materials\IReflectionModel.cs" />
     <Compile Include="Materials\PhongMaterial.cs" />
     <Compile Include="Materials\PhongReflectionModel.cs" />
-    <Compile Include="Materials\Textures\CheckerTexture.cs" />
-    <Compile Include="Materials\Textures\StripsTexture.cs" />
+    <Compile Include="Materials\Textures\CheckerTexture2D.cs" />
+    <Compile Include="Materials\Textures\StripsTexture2D.cs" />
     <Compile Include="Materials\Textures\ITexture.cs" />
     <Compile Include="Numerics\ColorRgbt.cs" />
     <Compile Include="Numerics\Point2.cs" />

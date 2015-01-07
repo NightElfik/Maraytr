@@ -1,8 +1,9 @@
 ﻿using System;
 using Maraytr.Numerics;
+using Maraytr.RayCasting;
 
 namespace Maraytr.Materials.Textures {
-	public class CheckerTexture : ITexture {
+	public class CheckerTexture2D : ITexture {
 
 		public double UFrequency { get; set; }
 		public double VFrequency { get; set; }
@@ -10,7 +11,7 @@ namespace Maraytr.Materials.Textures {
 		public ColorRgbt EvenColor { get; set; }
 		public ColorRgbt OddColor { get; set; }
 
-		public CheckerTexture() {
+		public CheckerTexture2D() {
 			UFrequency = 1;
 			VFrequency = 1;
 
@@ -19,10 +20,10 @@ namespace Maraytr.Materials.Textures {
 		}
 
 
-		public ColorRgbt GetColorAt(Vector2 coords) {
+		public ColorRgbt GetColorAt(Intersection intersection) {
 
-			double u = coords.X * UFrequency;
-			double v = coords.Y * VFrequency;
+			double u = intersection.TextureCoord.X * UFrequency;
+			double v = intersection.TextureCoord.Y * VFrequency;
 
 			long ui = (long)Math.Floor(u);
 			long vi = (long)Math.Floor(v);

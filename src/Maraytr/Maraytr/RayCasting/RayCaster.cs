@@ -95,7 +95,7 @@ namespace Maraytr.RayCasting {
 			var mat = intersec.Material;
 			ColorRgbt baseColor = mat.Texture == null
 				? mat.BaseColor
-				: mat.Texture.GetColorAt(intersec.TextureCoord) * mat.BaseColor;
+				: mat.Texture.GetColorAt(intersec) * mat.BaseColor;
 
 			if (CountAmbientOcclusion) {
 				int totalSamplesCount = 1 + AmbientOcclusionSamplesCount / (intState.StepsCountSqrt * intState.StepsCountSqrt);

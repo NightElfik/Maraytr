@@ -44,6 +44,7 @@ namespace Maraytr.Scenes.Csg {
 		public void CompleteIntersection(Intersection intersection) {
 			intersectableObject.CompleteIntersection(intersection);
 			intersection.Normal = transformToWorld.TransformNormal(intersection.Normal);
+			intersection.Normal.NormalizeThis();
 			intersection.Material = material;
 		}
 

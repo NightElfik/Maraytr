@@ -8,12 +8,6 @@ using Maraytr.RayCasting;
 namespace Maraytr.Scenes {
 	public class Scene {
 
-
-		public Scene() {
-			Lights = new List<ILightSource>();
-		}
-
-
 		public IIntersectable SceneRoot { get; set; }
 
 		public ColorRgbt BgColor { get; set; }
@@ -24,6 +18,11 @@ namespace Maraytr.Scenes {
 		public List<ILightSource> Lights { get; set; }
 
 		public IReflectionModel ReflectionModel { get; set; }
+
+
+		public Scene() {
+			Lights = new List<ILightSource>();
+		}
 
 	}
 }

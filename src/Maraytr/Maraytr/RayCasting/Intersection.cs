@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using Maraytr.Materials;
 using Maraytr.Numerics;
 using Maraytr.Scenes;
@@ -56,6 +57,7 @@ namespace Maraytr.RayCasting {
 		public Vector3 LocalIntersectionPt { get { return Ray.GetPointAt(RayParameter); } } 
 
 		public void CompleteIntersection() {
+			Contract.Ensures(Normal.LengthSquared.IsAlmostEqualTo(1));
 			IntersectedObject.CompleteIntersection(this);
 		}
 		

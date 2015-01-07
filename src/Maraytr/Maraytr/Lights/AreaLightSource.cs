@@ -25,8 +25,6 @@ namespace Maraytr.Lights {
 		}
 
 
-		#region ILightSource Members
-
 		public Vector3 GetPosition(IntegrationState intState) {
 
 			Vector3 dx = directionX * (1.0 / intState.StepsCountSqrt);
@@ -43,6 +41,5 @@ namespace Maraytr.Lights {
 			return emittedLight;
 		}
 
-		#endregion
 	}
 }

@@ -1,8 +1,9 @@
 ﻿using System;
 using Maraytr.Numerics;
+using Maraytr.RayCasting;
 
 namespace Maraytr.Materials.Textures {
-	public class StripsTexture : ITexture {
+	public class StripsTexture2D : ITexture {
 
 		public double Frequency { get; set; }
 		public bool Orientation { get; set; }
@@ -10,7 +11,7 @@ namespace Maraytr.Materials.Textures {
 		public ColorRgbt EvenColor { get; set; }
 		public ColorRgbt OddColor { get; set; }
 
-		public StripsTexture() {
+		public StripsTexture2D() {
 			Frequency = 1;
 
 			OddColor = new ColorRgbt(0.3f, 0.3f, 0.3f);
@@ -18,9 +19,9 @@ namespace Maraytr.Materials.Textures {
 		}
 
 
-		public ColorRgbt GetColorAt(Vector2 coords) {
+		public ColorRgbt GetColorAt(Intersection intersection) {
 
-			double t = (Orientation ? coords.X : coords.Y) * Frequency;
+			double t = (Orientation ? intersection.TextureCoord.X : intersection.TextureCoord.Y) * Frequency;
 
 			long ti = (long)Math.Floor(t);
 

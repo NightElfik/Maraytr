@@ -30,130 +30,12 @@ namespace Maraytr.WinFormsUi {
 				Width = 0.1
 			};
 
-			var scene = new Scene();
-			scene.BgColor = new ColorRgbt(0, 0, 0, 0);
-			scene.Camera = new PerspectiveCamera(new Vector3(0, 1, 6), new Vector3(0, 0, 0), new Vector3(0, 6, -1), 640, 480, 90);
-			//scene.Camera = new PerspectiveCamera(new Vector3(1.8, 2.1, 8), new Vector3(1.4, 1.3, 1.5), new Vector3(0, 1, 0), 640, 480, 90);
-			//scene.Camera = new PerspectiveCamera(new Vector3(1.015, 1.2, 3.1), new Vector3(1.4, 1.4, 1.5), new Vector3(0, 1, 0), 1920, 1200, 90);
-			//scene.Camera = new PerspectiveCamera(new Vector3(1.015, 1.2, 3.1), new Vector3(1.4, 1.4, 1.5), new Vector3(0, 1, 0), 2560, 1600, 90);
-			scene.AmbientLight = new ColorRgbt(0.1f, 0.1f, 0.1f);
-			//scene.Lights.Add(new PointLight(new Vector3(2, 7, 10), new ColorRgbt(1, 1, 1)));
-			scene.Lights.Add(new AreaLightSource(new Vector3(2, 7, 10), new ColorRgbt(1, 1, 1), Vector3.ZAxis, Vector3.XAxis));
 
-			var cube1 = new CsgObjectNode(cube,
-				new PhongMaterial() {
-					BaseColor = new ColorRgbt(1, 0, 0),
-					DiffuseReflectionCoef = new ColorRgbt(1, 1, 1),
-					SpecularReflectionCoef = new ColorRgbt(1, 1, 1),
-					ShininessCoef = 128
-				});
-			var sphere2 = new CsgObjectNode(sphere,
-				new PhongMaterial() {
-					Texture = new CheckerTexture() { UFrequency = 30, VFrequency = 30 },
-					BaseColor = new ColorRgbt(0, 1, 0),
-					DiffuseReflectionCoef = new ColorRgbt(1, 1, 1),
-					SpecularReflectionCoef = new ColorRgbt(1, 1, 1),
-					ShininessCoef = 128
-				});
-			var sphere3 = new CsgObjectNode(sphere,
-				new PhongMaterial() {
-					Texture = new StripsTexture() { Frequency = 40, Orientation = true },
-					BaseColor = new ColorRgbt(0, 0, 1),
-					DiffuseReflectionCoef = new ColorRgbt(1, 1, 1),
-					SpecularReflectionCoef = new ColorRgbt(1, 1, 1),
-					ReflectionFactor = 0.5f,
-					ShininessCoef = 128
-				});
-			var plane1 = new CsgObjectNode(plane,
-				new PhongMaterial() {
-					Texture = new CheckerTexture(),
-					BaseColor = new ColorRgbt(1, 1, 1),
-					DiffuseReflectionCoef = new ColorRgbt(1, 1, 1),
-					SpecularReflectionCoef = new ColorRgbt(0, 0, 0),
-				});
-			var plane2 = new CsgObjectNode(plane,
-				new PhongMaterial() {
-					Texture = new CheckerTexture(),
-					BaseColor = new ColorRgbt(1, 1, 1),
-					DiffuseReflectionCoef = new ColorRgbt(1, 1, 1),
-					SpecularReflectionCoef = new ColorRgbt(0, 0, 0),
-				});
+			var sceneFac = new DemoScenesFactory();
+			
+			var scene = sceneFac.CreateSimpleReflectScene();	
 
-			var sphereIntersec1 = new CsgObjectNode(sphere,
-				new PhongMaterial() {
-					BaseColor = new ColorRgbt(0, 1, 1),
-					DiffuseReflectionCoef = new ColorRgbt(1, 1, 1),
-					SpecularReflectionCoef = new ColorRgbt(0.5f, 0.5f, 0.5f),
-					ShininessCoef = 256
-				});
-			var cubeIntersec2 = new CsgObjectNode(cube,
-				new PhongMaterial() {
-					Texture = new CheckerTexture() { UFrequency = 5, VFrequency = 5 },
-					BaseColor = new ColorRgbt(1, 1, 0),
-					DiffuseReflectionCoef = new ColorRgbt(1, 1, 1),
-					SpecularReflectionCoef = new ColorRgbt(1, 1, 1),
-					ShininessCoef = 128
-				});
-
-
-			var mirrorPlane = new CsgObjectNode(plane,
-				new PhongMaterial() {
-					BaseColor = new ColorRgbt(0, 0, 0),
-					DiffuseReflectionCoef = new ColorRgbt(1, 1, 1),
-					SpecularReflectionCoef = new ColorRgbt(0, 0, 0),
-					ReflectionFactor = 1f,
-					ShininessCoef = 1
-				});
-
-			var mirrorCut = new CsgObjectNode(cube,
-				new PhongMaterial() {
-					BaseColor = new ColorRgbt(0.5f, 0.5f, 0.5f),
-					DiffuseReflectionCoef = new ColorRgbt(0.5f, 0.5f, 0.5f),
-					SpecularReflectionCoef = new ColorRgbt(0, 0, 0)
-				});
-
-
-			var union = new CsgBoolOperationNode(CsgBoolOperation.Union);
-			union.AddChildNode(cube1, Matrix4Affine.CreateTranslation(new Vector3(-1.6, 0, 0.2)) * Matrix4Affine.CreateScale(0.6));
-			union.AddChildNode(sphere3, Matrix4Affine.CreateTranslation(new Vector3(1.5, 0, 0)));
-			union.AddChildNode(plane1, Matrix4Affine.CreateIdentity());
-			union.AddChildNode(plane2, Matrix4Affine.CreateTranslation(new Vector3(0, -0.35, 0)));
-
-			var diff = new CsgBoolOperationNode(CsgBoolOperation.Difference);
-			diff.AddChildNode(union, Matrix4Affine.CreateIdentity());
-			diff.AddChildNode(sphere2, Matrix4Affine.CreateTranslation(new Vector3(0, 0, 1)) * Matrix4Affine.CreateScale(1.4));
-
-			var intersec = new CsgBoolOperationNode(CsgBoolOperation.Intersection);
-			intersec.AddChildNode(sphereIntersec1, Matrix4Affine.CreateTranslation(new Vector3(0.4, 0, 0)));
-			intersec.AddChildNode(cubeIntersec2, Matrix4Affine.CreateTranslation(new Vector3(0, -0.1, -0.1)));
-
-			var mirror = new CsgBoolOperationNode(CsgBoolOperation.Intersection);
-			mirror.AddChildNode(mirrorPlane, Matrix4Affine.CreateRotationX(90 * MathHelper.DegToRad));
-			mirror.AddChildNode(mirrorCut, Matrix4Affine.CreateTranslation(new Vector3(0, 0.5, -0.5))
-				* Matrix4Affine.CreateScale(new Vector3(4, 1.8, 1)));
-
-			var sceneRoot = new CsgBoolOperationNode(CsgBoolOperation.Union);
-			sceneRoot.AddChildNode(diff, Matrix4Affine.CreateIdentity());
-			sceneRoot.AddChildNode(intersec, Matrix4Affine.CreateTranslation(new Vector3(0.8, 0, 3)) * Matrix4Affine.CreateScale(0.5));
-			sceneRoot.AddChildNode(mirror, Matrix4Affine.CreateTranslation(new Vector3(-2, 0, -2))
-				* Matrix4Affine.CreateRotationX(-15 * MathHelper.DegToRad));
-
-			//var mengerSponge = new CsgObjectNode(new MengerSponge() {
-			//		IterationsCount = 2
-			//	},
-			//	new PhongMaterial() {
-			//		BaseColor = new ColorRgbt(1, 1, 1),
-			//		DiffuseReflectionCoef = new ColorRgbt(1, 1, 1),
-			//		SpecularReflectionCoef = new ColorRgbt(0, 0, 0),
-			//		ReflectionFactor = 0.5f,
-			//	});
-			//sceneRoot.AddChildNode(mengerSponge, Matrix4Affine.CreateIdentity());
-
-
-			sceneRoot.PrecomputeWorldTransform(Matrix4Affine.CreateIdentity());
-			scene.SceneRoot = sceneRoot;
-
-			scene.ReflectionModel = new PhongReflectionModel();
+			//var scene = sceneFac.CreateIntroScene();	
 
 			rayTracer = new RayTracer(scene) {
 				MaxTraceDepth = 16,
@@ -164,8 +46,6 @@ namespace Maraytr.WinFormsUi {
 				//AmbientOcclusionSamplesCount = 1 << 1,
 				//AmbientOcclusionOnly = true,
 			};
-
-
 		}
 
 		private void btnRender_Click(object sender, EventArgs e) {
@@ -178,7 +58,7 @@ namespace Maraytr.WinFormsUi {
 			//rayTracer.GetSample(550, height - 300, new IntegrationState());
 
 			var resultArr = new ColorRgbt[height, width];
-			var ssif = new SupersamplingImageFunction(rayTracer) { SuperSampling = 3 };
+			var ssif = new SupersamplingImageFunction(rayTracer) { SuperSampling = 4 };
 			var pff = new ParalellImageFuncFetcher(ssif);
 			var asyncResult = pff.FetchAsync(resultArr);
 
