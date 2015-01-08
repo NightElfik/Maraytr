@@ -27,3 +27,9 @@ Features
 * Procedural textures (checkers, stripes).
 * Perspective camera.
 
+Images
+------
+
+![Test scene](http://www.marekfiser.com/Img/640/480/Img/Projects/Maraytr/Dice.png)
+
+![Test scene](http://www.marekfiser.com/Img/640/480/Img/Projects/Maraytr/4thDay.png)
