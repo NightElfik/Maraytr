@@ -24,22 +24,22 @@ namespace Maraytr.Scenes.Csg {
 
 		
 		public override int Intersect(Ray globalRay, IList<Intersection> outIntersections) {
-			Contract.Requires<ArgumentNullException>(ChildrensCount >= 1);
+			Contract.Requires<ArgumentNullException>(ChildrenCount >= 1);
 			Contract.Requires<ArgumentNullException>(outIntersections != null);
 			Contract.Ensures(outIntersections.Count % 2 == 0);  // The number of intersections is always even (enters and exits are paired).
 
 			var intersections = new List<Intersection>();
 			
 			if (Operation == CsgBoolOperation.Difference) {
-				childrens[0].Intersect(globalRay, intersections);
+				children[0].Intersect(globalRay, intersections);
 				if (intersections.Count == 0) {
 					return 0;
 				}
 
 				var minuends = intersections.Select(x => x.IntersectedObject).ToList();
 
-				for (int i = 1; i < childrens.Count; ++i) {
-					childrens[i].Intersect(globalRay, intersections);
+				for (int i = 1; i < children.Count; ++i) {
+					children[i].Intersect(globalRay, intersections);
 				}
 
 				intersections.Sort();
@@ -47,8 +47,8 @@ namespace Maraytr.Scenes.Csg {
 			}
 
 			// Gather intersections from all childs.
-			for (int i = 0; i < childrens.Count; ++i) {
-				childrens[i].Intersect(globalRay, intersections);
+			for (int i = 0; i < children.Count; ++i) {
+				children[i].Intersect(globalRay, intersections);
 			}
 
 			if (intersections.Count == 0) {
@@ -59,7 +59,7 @@ namespace Maraytr.Scenes.Csg {
 
 			switch (Operation) {
 				case CsgBoolOperation.Union: return computeIntersection(intersections, outIntersections, 1);
-				case CsgBoolOperation.Intersection: return computeIntersection(intersections, outIntersections, childrens.Count);
+				case CsgBoolOperation.Intersection: return computeIntersection(intersections, outIntersections, children.Count);
 				case CsgBoolOperation.Xor: throw new NotImplementedException();
 				default: throw new InvalidOperationException("Invalid operation of CSG node.");
 			}

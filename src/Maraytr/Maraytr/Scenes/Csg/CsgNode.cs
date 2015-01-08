@@ -5,7 +5,7 @@ using Maraytr.RayCasting;
 namespace Maraytr.Scenes.Csg {
 	public abstract class CsgNode : IIntersectable {
 
-		protected List<CsgNode> childrens = new List<CsgNode>();
+		protected List<CsgNode> children = new List<CsgNode>();
 
 		/// <summary>
 		/// Parent node (null for root).
@@ -14,11 +14,11 @@ namespace Maraytr.Scenes.Csg {
 
 		public bool IsRoot { get { return Parent == null; } }
 
-		public IEnumerable<CsgNode> Childrens { get { return childrens; } }
+		public IEnumerable<CsgNode> Children { get { return children; } }
 				
-		public bool IsLeaf { get { return childrens.Count == 0; } }
+		public bool IsLeaf { get { return children.Count == 0; } }
 
-		public int ChildrensCount { get { return childrens.Count; } }
+		public int ChildrenCount { get { return children.Count; } }
 
 		public Matrix4Affine LocalTransform { get; set; }
 				
@@ -33,28 +33,28 @@ namespace Maraytr.Scenes.Csg {
 
 		
 		public void AddChild(CsgNode node) {
-			childrens.Add(node);
+			children.Add(node);
 		}
 		
 		public void AddChild(params CsgNode[] nodes) {
-			childrens.AddRange(nodes);
+			children.AddRange(nodes);
 		}
 
 		public void AddChild(IEnumerable<CsgNode> nodes) {
-			childrens.AddRange(nodes);
+			children.AddRange(nodes);
 		}
 
 		public bool RemoveChild(CsgNode node) {
-			return childrens.Remove(node);
+			return children.Remove(node);
 		}
 
-		public void ClearChildrens() {
-			childrens.Clear();
+		public void ClearChildren() {
+			children.Clear();
 		}
 
 		public virtual void PrecomputeTransformCaches(Matrix4Affine globalTransform) {		
 			var t = globalTransform * LocalTransform;
-			foreach (var child in childrens) {
+			foreach (var child in children) {
 				child.PrecomputeTransformCaches(t);
 			}
 		}
