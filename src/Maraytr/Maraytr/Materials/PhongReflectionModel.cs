@@ -11,10 +11,10 @@ namespace Maraytr.Materials {
 
 		public ColorRgbt CountReflection(IMaterial material, ColorRgbt baseColor, Vector3 surfaceNormal, Vector3 lightDirection, Vector3 viewDirection) {
 
-			Contract.Requires<ArgumentException>(material is PhongMaterial);
-
 			PhongMaterial mat = material as PhongMaterial;
-
+			if (mat == null) {
+				return ColorRgbt.Black;
+			}
 
 			ColorRgbt resultColor = ColorRgbt.Black;
 

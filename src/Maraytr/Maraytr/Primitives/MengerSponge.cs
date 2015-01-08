@@ -18,11 +18,11 @@ namespace Maraytr.Primitives {
 			Vector3.ZAxis,
 		};
 
-		public int Intersect(Ray ray, ICollection<Intersection> outIntersections) {
+		public int Intersect(Ray ray, IList<Intersection> outIntersections) {
 			return intersect(ray, outIntersections, 0);
 		}
 
-		private int intersect(Ray ray, ICollection<Intersection> outIntersections, int iteration) {
+		private int intersect(Ray ray, IList<Intersection> outIntersections, int iteration) {
 			++iteration;
 
 			var intersections = new List<TempIntersection>();

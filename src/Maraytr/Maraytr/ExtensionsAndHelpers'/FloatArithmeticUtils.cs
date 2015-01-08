@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using Maraytr.Numerics;
 
 namespace Maraytr {
@@ -11,10 +12,12 @@ namespace Maraytr {
 		/// <remarks>
 		/// Faster equivalent to isAlmostEqualTo(value, 0).
 		/// </remarks>
+		[Pure]
 		public static bool IsAlmostZero(this double value) {
 			return value < DBL_EPSILON && value > -DBL_EPSILON;
 		}
-
+		
+		[Pure]
 		public static bool IsAlmostEqualTo(this double left, double right) {
 			// Check direct equality in case they are infinities where epsilon check does not work.
 			if (left == right) {
@@ -26,7 +29,8 @@ namespace Maraytr {
 			return (-eps < delta) && (eps > delta);
 
 		}
-
+		
+		[Pure]
 		public static bool IsAlmostLessThan(this double left, double right) {
 			// Check direct relation for speed and to correctly handle infinities.
 			if (left < right) {
@@ -36,7 +40,8 @@ namespace Maraytr {
 			// Return true if numbers are almost equal, otherwise false.
 			return IsAlmostEqualTo(left, right);
 		}
-
+		
+		[Pure]
 		public static bool IsAlmostGreaterThan(this double left, double right) {
 			// Check direct relation for speed and to correctly handle infinities.
 			if (left > right) {
@@ -46,16 +51,19 @@ namespace Maraytr {
 			// Return true if numbers are almost equal, otherwise false.
 			return IsAlmostEqualTo(left, right);
 		}
-
+		
+		[Pure]
 		public static bool IsAlmostBetween(this double value, double min, double max) {
 			return IsAlmostGreaterThan(value, min) && IsAlmostLessThan(value, max);
 		}
 
-
+		
+		[Pure]
 		public static bool IsAlmostZero(this float value) {
 			return value < SGL_EPSILON && value > -SGL_EPSILON;
 		}
-
+		
+		[Pure]
 		public static bool IsAlmostEqualTo(this float value1, float value2) {
 
 			// in case they are Infinities (then epsilon check does not work)
@@ -69,13 +77,15 @@ namespace Maraytr {
 			return (-eps < delta) && (eps > delta);
 
 		}
-
+		
+		[Pure]
 		public static bool IsAlmostEqualTo(this Vector3 v1, Vector3 v2) {
 
 			return v1.X.IsAlmostEqualTo(v2.X) && v1.Y.IsAlmostEqualTo(v2.Y) && v1.Z.IsAlmostEqualTo(v2.Z);
 
 		}
-
+		
+		[Pure]
 		public static bool IsEpsilonGreaterThanZero(this double value) {
 			return value > DBL_EPSILON;
 		}

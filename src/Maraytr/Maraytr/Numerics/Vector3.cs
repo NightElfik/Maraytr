@@ -30,7 +30,7 @@ namespace Maraytr.Numerics {
 					case 0: X = value; break;
 					case 1: Y = value; break;
 					case 2: Z = value; break;
-					default: throw new ArgumentException("Invalid index " + i + " while setting 3D vector."); break;
+					default: throw new ArgumentException("Invalid index " + i + " while setting 3D vector.");
 				}
 			}
 		}
@@ -70,7 +70,8 @@ namespace Maraytr.Numerics {
 
 		public bool IsAlmostZero { get { return LengthSquared.IsAlmostZero(); } }
 
-
+		
+		[Pure]
 		public Vector3 Normalize() {
 			Contract.Requires<InvalidOperationException>(!IsAlmostZero);
 
@@ -86,7 +87,8 @@ namespace Maraytr.Numerics {
 			Y /= length;
 			Z /= length;
 		}
-
+		
+		[Pure]
 		public bool HasSameDirectionAs(Vector3 v) {
 			if (IsAlmostZero || v.IsAlmostZero) {
 				return false;
@@ -94,15 +96,18 @@ namespace Maraytr.Numerics {
 
 			return Normalize().IsAlmostEqualTo(v.Normalize());
 		}
-
+		
+		[Pure]
 		public double Dot(Vector3 v) {
 			return X * v.X + Y * v.Y + Z * v.Z;
 		}
 		
+		[Pure]
 		public Vector3 Cross(Vector3 v) {
 			return new Vector3(Y * v.Z - Z * v.Y, Z * v.X - X * v.Z, X * v.Y - Y * v.X);
 		}
-
+		
+		[Pure]
 		public double AngleTo(Vector3 v) {
 			var normalizedDot = Dot(v) / Math.Sqrt(LengthSquared * v.LengthSquared);
 			return Math.Acos(normalizedDot.Clamp(-1, 1));

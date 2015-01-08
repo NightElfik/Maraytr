@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using Maraytr.Lights;
 using Maraytr.Numerics;
 using Maraytr.Rendering;
@@ -22,7 +23,7 @@ namespace Maraytr.RayCasting {
 			}
 		}
 
-		public bool CountShadows { get; set; }
+		public bool ComputeShadows { get; set; }
 
 		public Size Size { get { return scene.Camera.Size; } }
 
@@ -77,6 +78,7 @@ namespace Maraytr.RayCasting {
 
 
 		protected ColorRgbt evaluateIntersection(Intersection intersec, IntegrationState intState) {
+			Contract.Requires(intersec.Normal.LengthSquared.IsAlmostEqualTo(1));
 
 			intersec.CompleteIntersection();
 
@@ -84,9 +86,8 @@ namespace Maraytr.RayCasting {
 			Vector3 intersecPos = intersec.Position;
 			Vector3 surfaceNormal = intersec.Normal;
 			if (intersec.InverseNormal) {
-				intersec.Normal *= -1.0;
+				surfaceNormal *= -1.0;
 			}
-			surfaceNormal.NormalizeThis();
 
 			if (ShowNormals) {
 				return new ColorRgbt((float)(1 + surfaceNormal.X) / 2, (float)(1 + surfaceNormal.Y) / 2, (float)(1 + surfaceNormal.Z) / 2);
@@ -116,7 +117,7 @@ namespace Maraytr.RayCasting {
 
 				Vector3 lightPos = lightSource.GetPosition(intState);
 
-				if (CountShadows && !isPointDirectlyVisibleFrom(intersecPos, lightPos)) {
+				if (ComputeShadows && !isPointDirectlyVisibleFrom(intersecPos, lightPos)) {
 					continue;
 				}
 

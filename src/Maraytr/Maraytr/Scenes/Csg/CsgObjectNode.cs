@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using Maraytr.Materials;
 using Maraytr.Numerics;
 using Maraytr.RayCasting;
@@ -7,45 +8,57 @@ using Maraytr.RayCasting;
 namespace Maraytr.Scenes.Csg {
 	public class CsgObjectNode : CsgNode, IIntersectableObject {
 
-		protected Matrix4Affine transformToWorld;
+		public IIntersectableObject IntersectableObject { get; set; }
 
-		protected IIntersectableObject intersectableObject;
-
-		public IMaterial material;
+		public IMaterial Material { get; set; }
 
 
-		public CsgObjectNode(IIntersectableObject intObject, IMaterial material) {
-			intersectableObject = intObject;
-			this.material = material;
+		private Matrix4Affine globalToLocalTransformCache;
+
+		private Matrix4Affine localToGlobalTransformCache;
+
+
+		public CsgObjectNode(IIntersectableObject intObject, IMaterial material, Matrix4Affine transform)
+			: base(transform) {
+
+			IntersectableObject = intObject;
+			Material = material;
+		}
+
+		public override void PrecomputeTransformCaches(Matrix4Affine globalTransform) {			
+			localToGlobalTransformCache = globalTransform * LocalTransform;
+			globalToLocalTransformCache = localToGlobalTransformCache.Inverse();
+
+			// Not needed, we dont have/dont care about our childs.
+			//base.PrecomputeTransformCaches(globalToLocalTransformCache);
 		}
 
 
+		public override int Intersect(Ray globalRay, IList<Intersection> outIntersections) {
+			Contract.Assert(localToGlobalTransformCache != null);
+			Contract.Assert(globalToLocalTransformCache != null);
 
-		public override void PrecomputeWorldTransform(Matrix4Affine worldTransform) {
-			transformToWorld = worldTransform;
-		}
+			int startIndex = outIntersections.Count;
 
-		public override int Intersect(Ray ray, ICollection<Intersection> outIntersections) {
-			var tempIntersections = new List<Intersection>();  // TODO: improve performance
-			int isecCount = intersectableObject.Intersect(ray, tempIntersections);
-			Debug.Assert(isecCount == tempIntersections.Count);
+			Ray localRay = globalRay.Transform(globalToLocalTransformCache);
+			int isecCount = IntersectableObject.Intersect(localRay, outIntersections);
+			Debug.Assert(outIntersections.Count == startIndex + isecCount);
 
 			for (int i = 0; i < isecCount; ++i) {
-				var isec = tempIntersections[i];
+				var isec = outIntersections[startIndex + i];
 				isec.IntersectedObject = this;
-				isec.Position = transformToWorld.Transform(ray.GetPointAt(isec.RayParameter));
-				isec.RayDistanceSqSigned = (isec.Position - ray.RayWorldCoords.StartPoint).LengthSquared * (isec.RayParameter >= 0.0 ? 1 : -1);
-				outIntersections.Add(isec);
+				isec.Position = localToGlobalTransformCache.Transform(localRay.GetPointAt(isec.RayParameter));
+				isec.RayDistanceSqSigned = (isec.Position - globalRay.StartPoint).LengthSquared * (isec.RayParameter >= 0.0 ? 1 : -1);
 			}
 
 			return isecCount;
 		}
 
 		public void CompleteIntersection(Intersection intersection) {
-			intersectableObject.CompleteIntersection(intersection);
-			intersection.Normal = transformToWorld.TransformNormal(intersection.Normal);
+			IntersectableObject.CompleteIntersection(intersection);
+			intersection.Normal = localToGlobalTransformCache.TransformNormal(intersection.Normal);
 			intersection.Normal.NormalizeThis();
-			intersection.Material = material;
+			intersection.Material = Material;
 		}
 
 	}

@@ -1,57 +1,37 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using Maraytr.Numerics;
 using Maraytr.RayCasting;
 
 namespace Maraytr.Scenes.Csg {
 	public class CsgBoolOperationNode : CsgNode {
 
-		private List<CsgNode> childrens = new List<CsgNode>();
-		private List<Matrix4Affine> childTransforms = new List<Matrix4Affine>();
-		//private List<Matrix4Affine> childToWorldTransforms = new List<Matrix4Affine>();
-
-
-		public CsgBoolOperationNode(CsgBoolOperation boolOperation) {
-			Operation = boolOperation;
-		}
 
 		public CsgBoolOperation Operation { get; set; }
 
-		public int ChildrensCount { get { return childrens.Count; } }
 
-		//public IEnumerable<CsgNode> Childrens { get { return childrens; } }
-
-		//public IEnumerable<Matrix4> ChildTransforms { get { return childTransforms; } }
-
-
-		public void AddChildNode(CsgNode node, Matrix4Affine transformation) {
-			childrens.Add(node);
-			childTransforms.Add(transformation.Inverse());
+		
+		public CsgBoolOperationNode(CsgBoolOperation boolOperation) : base() {
+			Operation = boolOperation;
 		}
 
-
-		public override void PrecomputeWorldTransform(Matrix4Affine worldTransform) {
-			for (int i = 0; i < childrens.Count; ++i) {
-				var inv = childTransforms[i].Inverse();
-				var childToWorld = worldTransform * inv;
-				childrens[i].PrecomputeWorldTransform(childToWorld);
-			}
+		public CsgBoolOperationNode(CsgBoolOperation boolOperation, Matrix4Affine localTransform) : base(localTransform) {
+			Operation = boolOperation;
 		}
 
-
-		public override int Intersect(Ray ray, ICollection<Intersection> outIntersections) {
-
+		
+		public override int Intersect(Ray globalRay, IList<Intersection> outIntersections) {
 			Contract.Requires<ArgumentNullException>(ChildrensCount >= 1);
 			Contract.Requires<ArgumentNullException>(outIntersections != null);
-			Contract.Ensures(outIntersections.Count % 2 == 0);  // number of intersections is always even (enter and exit are paired).
+			Contract.Ensures(outIntersections.Count % 2 == 0);  // The number of intersections is always even (enters and exits are paired).
 
 			var intersections = new List<Intersection>();
-
+			
 			if (Operation == CsgBoolOperation.Difference) {
-				childrens[0].Intersect(ray.Transform(childTransforms[0]), intersections);
+				childrens[0].Intersect(globalRay, intersections);
 				if (intersections.Count == 0) {
 					return 0;
 				}
@@ -59,16 +39,16 @@ namespace Maraytr.Scenes.Csg {
 				var minuends = intersections.Select(x => x.IntersectedObject).ToList();
 
 				for (int i = 1; i < childrens.Count; ++i) {
-					childrens[i].Intersect(ray.Transform(childTransforms[i]), intersections);
+					childrens[i].Intersect(globalRay, intersections);
 				}
 
 				intersections.Sort();
 				return computeDifference(intersections, minuends, outIntersections);
 			}
 
-			// gather intersections from all childs
+			// Gather intersections from all childs.
 			for (int i = 0; i < childrens.Count; ++i) {
-				childrens[i].Intersect(ray.Transform(childTransforms[i]), intersections);
+				childrens[i].Intersect(globalRay, intersections);
 			}
 
 			if (intersections.Count == 0) {
@@ -85,6 +65,7 @@ namespace Maraytr.Scenes.Csg {
 			}
 		}
 		
+
 		private int computeIntersection(List<Intersection> intersections, ICollection<Intersection> outIntersections, int requiredObjectsCount) {
 
 			int insideCount = 0;
@@ -94,13 +75,13 @@ namespace Maraytr.Scenes.Csg {
 				if (intersec.IsEnter) {
 					++insideCount;
 					if (insideCount == requiredObjectsCount) {
-						outIntersections.Add(intersec);  // add entering intersection to the result
+						outIntersections.Add(intersec);  // Add entering intersection to the result.
 						++count;
 					}
 				}
 				else {
 					if (insideCount == requiredObjectsCount) {
-						outIntersections.Add(intersec);  // add leaving intersection to the result
+						outIntersections.Add(intersec);  // Add leaving intersection to the result.
 						++count;
 					}
 					--insideCount;

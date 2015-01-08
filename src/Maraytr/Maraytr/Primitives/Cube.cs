@@ -7,7 +7,7 @@ using Maraytr.RayCasting;
 namespace Maraytr.Primitives {
 	public class Cube : IIntersectableObject {
 
-		public int Intersect(Ray ray, ICollection<Intersection> outIntersections) {
+		public int Intersect(Ray ray, IList<Intersection> outIntersections) {
 
 			// http://www.siggraph.org/education/materials/HyperGraph/raytrace/rtinter3.htm
 			double tMin = Double.NegativeInfinity;

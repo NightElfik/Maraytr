@@ -3,6 +3,9 @@ using System.Diagnostics.Contracts;
 using Maraytr.Numerics;
 
 namespace Maraytr.RayCasting {
+	/// <summary>
+	/// Immutable
+	/// </summary>
 	public class Ray {
 
 		public readonly Ray RayWorldCoords;

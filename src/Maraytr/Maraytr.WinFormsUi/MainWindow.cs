@@ -3,17 +3,11 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Threading;
 using System.Windows.Forms;
-using Maraytr.Cameras;
-using Maraytr.Lights;
-using Maraytr.Materials;
-using Maraytr.Materials.Textures;
 using Maraytr.Numerics;
 using Maraytr.Primitives;
 using Maraytr.RayCasting;
 using Maraytr.RayTracing;
 using Maraytr.Rendering;
-using Maraytr.Scenes;
-using Maraytr.Scenes.Csg;
 
 namespace Maraytr.WinFormsUi {
 	public partial class frmMainWindow : Form {
@@ -33,14 +27,14 @@ namespace Maraytr.WinFormsUi {
 
 			var sceneFac = new DemoScenesFactory();
 			
-			var scene = sceneFac.CreateSimpleReflectScene();	
+			//var scene = sceneFac.CreateSimpleReflectScene();	
 
-			//var scene = sceneFac.CreateIntroScene();	
+			var scene = sceneFac.CreateIntroScene();	
 
 			rayTracer = new RayTracer(scene) {
 				MaxTraceDepth = 16,
 				MinContribution = 0.01,
-				CountShadows = true,
+				ComputeShadows = true,
 				//ShowNormals = true,
 				//CountAmbientOcclusion = true,
 				//AmbientOcclusionSamplesCount = 1 << 1,

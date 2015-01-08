@@ -8,7 +8,7 @@ using Maraytr.RayCasting;
 namespace Maraytr.Primitives {
 	public class Sphere : IIntersectableObject {
 				
-		public int Intersect(Ray ray, ICollection<Intersection> outIntersections) {
+		public int Intersect(Ray ray, IList<Intersection> outIntersections) {
 
 			// Sphere with center c and radius r: |x - c|^2 = r^2
 			// Ray width start s and direction d (normalized): x = s + t d

@@ -18,7 +18,7 @@ namespace Maraytr.Primitives {
 		public IMaterial Material { get; set; }
 
 
-		public int Intersect(Ray ray, ICollection<Intersection> outIntersections) {
+		public int Intersect(Ray ray, IList<Intersection> outIntersections) {
 
 			// Plane XZ: x = [x, 0, z] (y = 0)
 			// Ray width start s and direction d (normalized): x = s + t d

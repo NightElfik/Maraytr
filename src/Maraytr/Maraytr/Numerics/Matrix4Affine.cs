@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
 namespace Maraytr.Numerics {
-	public class Matrix4Affine : IEquatable<Matrix4Affine> {
+	public class Matrix4Affine /*: IEquatable<Matrix4Affine>*/ {
 
 		public double M11;
 		public double M12;
@@ -133,9 +133,9 @@ namespace Maraytr.Numerics {
 			return m;
 		}
 
-		public static Matrix4Affine CreateRotationX(double angle) {
-			double sin = Math.Sin(angle);
-			double cos = Math.Cos(angle);
+		public static Matrix4Affine CreateRotationX(double angleRad) {
+			double sin = Math.Sin(angleRad);
+			double cos = Math.Cos(angleRad);
 			var m = new Matrix4Affine();
 			m.M11 = 1;
 			m.M22 = cos;
@@ -145,12 +145,24 @@ namespace Maraytr.Numerics {
 			return m;
 		}
 
-		public static Matrix4Affine CreateRotationAngleAxis(double angle, Vector3 axis) {
+		public static Matrix4Affine CreateRotationY(double angleRad) {
+			double sin = Math.Sin(angleRad);
+			double cos = Math.Cos(angleRad);
+			var m = new Matrix4Affine();
+			m.M11 = cos;
+			m.M13 = -sin;
+			m.M22 = 1;
+			m.M31 = sin;
+			m.M33 = cos;
+			return m;
+		}
+
+		public static Matrix4Affine CreateRotationAngleAxis(double angleRad, Vector3 axis) {
 			Contract.Requires(axis.IsNormalized);
 
-			double cos = Math.Cos(angle);
+			double cos = Math.Cos(angleRad);
 			double iCos = 1 - cos;
-			double sin = Math.Sin(angle);
+			double sin = Math.Sin(angleRad);
 			var m = new Matrix4Affine();
 			
 			m.M11 = axis.X * axis.X * iCos + cos;
@@ -399,21 +411,17 @@ namespace Maraytr.Numerics {
 
 
 		public Vector3 Transform(Vector3 v) {
-
 			return new Vector3(
 				M11 * v.X + M12 * v.Y + M13 * v.Z + M14,
 				M21 * v.X + M22 * v.Y + M23 * v.Z + M24,
 				M31 * v.X + M32 * v.Y + M33 * v.Z + M34);
-
 		}
 
 		public Vector3 TransformVector(Vector3 v) {
-
 			return new Vector3(
 				M11 * v.X + M12 * v.Y + M13 * v.Z,
 				M21 * v.X + M22 * v.Y + M23 * v.Z,
 				M31 * v.X + M32 * v.Y + M33 * v.Z);
-
 		}
 
 		/// <summary>
@@ -450,17 +458,17 @@ namespace Maraytr.Numerics {
 				&& M34.IsAlmostEqualTo(other.M34);
 		}
 
-		public override bool Equals(object obj) {
-			if (obj is Matrix4Affine) {
-				return this == obj as Matrix4Affine;
-			}
-			else {
-				return false;
-			}
-		}
+		//public override bool Equals(object obj) {
+		//	if (obj is Matrix4Affine) {
+		//		return this == obj as Matrix4Affine;
+		//	}
+		//	else {
+		//		return false;
+		//	}
+		//}
 
-		public bool Equals(Matrix4Affine other) {
-			return this == other;
-		}
+		//public bool Equals(Matrix4Affine other) {
+		//	return this == other;
+		//}
 	}
 }

@@ -4,7 +4,7 @@ using Maraytr.Materials;
 namespace Maraytr.RayCasting {
 	public interface IIntersectable {
 
-		int Intersect(Ray ray, ICollection<Intersection> outIntersections);
+		int Intersect(Ray ray, IList<Intersection> outIntersections);
 
 	}
 
