@@ -157,6 +157,18 @@ namespace Maraytr.Numerics {
 			return m;
 		}
 
+		public static Matrix4Affine CreateRotationZ(double angleRad) {
+			double sin = Math.Sin(angleRad);
+			double cos = Math.Cos(angleRad);
+			var m = new Matrix4Affine();
+			m.M11 = cos;
+			m.M12 = sin;
+			m.M21 = -sin;
+			m.M22 = cos;
+			m.M33 = 1;
+			return m;
+		}
+
 		public static Matrix4Affine CreateRotationAngleAxis(double angleRad, Vector3 axis) {
 			Contract.Requires(axis.IsNormalized);
 

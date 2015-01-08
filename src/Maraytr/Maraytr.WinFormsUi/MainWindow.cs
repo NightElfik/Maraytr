@@ -25,11 +25,12 @@ namespace Maraytr.WinFormsUi {
 			};
 
 
-			var sceneFac = new DemoScenesFactory();
+			var sceneFac = new DemoScenesFactory();			
+
+			var scene = sceneFac.CreateIntroScene();
 			
 			//var scene = sceneFac.CreateSimpleReflectScene();	
-
-			var scene = sceneFac.CreateIntroScene();	
+			//var scene = sceneFac.CreateDiceScene();
 
 			rayTracer = new RayTracer(scene) {
 				MaxTraceDepth = 16,
@@ -52,7 +53,7 @@ namespace Maraytr.WinFormsUi {
 			//rayTracer.GetSample(550, height - 300, new IntegrationState());
 
 			var resultArr = new ColorRgbt[height, width];
-			var ssif = new SupersamplingImageFunction(rayTracer) { SuperSampling = 4 };
+			var ssif = new SupersamplingImageFunction(rayTracer) { SuperSampling = 3 };
 			var pff = new ParalellImageFuncFetcher(ssif);
 			var asyncResult = pff.FetchAsync(resultArr);
 

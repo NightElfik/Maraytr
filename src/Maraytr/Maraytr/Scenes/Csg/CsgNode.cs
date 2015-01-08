@@ -40,6 +40,10 @@ namespace Maraytr.Scenes.Csg {
 			childrens.AddRange(nodes);
 		}
 
+		public void AddChild(IEnumerable<CsgNode> nodes) {
+			childrens.AddRange(nodes);
+		}
+
 		public bool RemoveChild(CsgNode node) {
 			return childrens.Remove(node);
 		}

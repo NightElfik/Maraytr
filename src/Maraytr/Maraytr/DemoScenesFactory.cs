@@ -1,4 +1,6 @@
-﻿using Maraytr.Cameras;
+﻿using System;
+using System.Collections.Generic;
+using Maraytr.Cameras;
 using Maraytr.Lights;
 using Maraytr.Materials;
 using Maraytr.Materials.Textures;
@@ -346,6 +348,103 @@ namespace Maraytr {
 			return scene;
 		}
 
+		/// <summary>
+		/// Good with FOV 60 degrees.
+		/// </summary>
+		public Scene CreateDiceScene() {
+			var scene = createEmptyScene();
+
+			scene.Camera = new PerspectiveCamera(new Vector3(2, 4, 4), new Vector3(0, 0.3, 0), new Vector3(0, 6, -1), 640, 480, 60);
+			scene.Lights.Add(new AreaLightSource(new Vector3(-2.2, 7, 4), new ColorRgbt(1, 1, 1), Vector3.ZAxis, Vector3.XAxis));
+			scene.Lights.Add(new PointLight(new Vector3(5, 1, 0), new ColorRgbt(0.2f, 0.2f, 0.3f)));
+
+			var diceMat = new PhongMaterial() {
+				BaseColor = new ColorRgbt(0.8f, 0, 0),
+				DiffuseReflectionCoef = new ColorRgbt(1, 1, 1),
+				SpecularReflectionCoef = new ColorRgbt(1, 1, 1),
+				ShininessCoef = 128,
+			};
+			var baseCube = new CsgObjectNode(unitCube,
+				diceMat,
+				Matrix4Affine.CreateTranslation(new Vector3(-0.5, -0.5, -0.5))
+			);
+
+			var cornersCutSphere = new CsgObjectNode(unitSphere,
+				diceMat,
+				Matrix4Affine.CreateScale(0.72)
+			);
+
+			var cornersCutCube1 = new CsgObjectNode(unitCube,
+				diceMat,
+				Matrix4Affine.CreateScale(0.99 * Math.Sqrt(2)) * Matrix4Affine.CreateRotationX(45 * MathHelper.DegToRad)
+					* Matrix4Affine.CreateTranslation(new Vector3(-0.5, -0.5, -0.5))
+			);
+			var cornersCutCube2 = new CsgObjectNode(unitCube,
+				diceMat,
+				Matrix4Affine.CreateScale(0.99 * Math.Sqrt(2)) * Matrix4Affine.CreateRotationY(45 * MathHelper.DegToRad)
+					* Matrix4Affine.CreateTranslation(new Vector3(-0.5, -0.5, -0.5))
+			);
+			var cornersCutCube3 = new CsgObjectNode(unitCube,
+				diceMat,
+				Matrix4Affine.CreateScale(0.99 * Math.Sqrt(2)) * Matrix4Affine.CreateRotationZ(45 * MathHelper.DegToRad)
+					* Matrix4Affine.CreateTranslation(new Vector3(-0.5, -0.5, -0.5))
+			);
+
+			var floor = new CsgObjectNode(thinPlane,
+				new PhongMaterial() {
+					Texture = new CheckerTexture2D(),
+					BaseColor = new ColorRgbt(0.8f, 0.8f, 0.8f),
+					DiffuseReflectionCoef = new ColorRgbt(1, 1, 1),
+					ReflectionFactor = 0.4f,
+				},
+				Matrix4Affine.CreateIdentity()
+			);
+
+
+
+			var diceShape = new CsgBoolOperationNode(CsgBoolOperation.Intersection, Matrix4Affine.CreateTranslation(new Vector3(0.5, 0.5, 0.5)));
+			diceShape.AddChild(baseCube, cornersCutSphere, cornersCutCube1, cornersCutCube2, cornersCutCube3);
+
+			List<CsgNode> diffDice = new List<CsgNode>();
+			diffDice.Add(diceShape);
+
+			double holeRadius = 0.13;
+			double holeOffset = holeRadius - holeRadius / 2.5;
+			double spacing = 0.29;
+			// Front
+			diffDice.Add(createHoleSphere(spacing, spacing, 1 + holeOffset, holeRadius));
+			diffDice.Add(createHoleSphere(spacing, 1 - spacing, 1 + holeOffset, holeRadius));
+			diffDice.Add(createHoleSphere(1 - spacing, 1 - spacing, 1 + holeOffset, holeRadius));
+			diffDice.Add(createHoleSphere(1 - spacing, spacing, 1 + holeOffset, holeRadius));
+			// Top
+			diffDice.Add(createHoleSphere(0.5, 1 + holeOffset, 0.5, holeRadius));
+			// Side
+			diffDice.Add(createHoleSphere(1 + holeOffset, 1 - spacing, spacing, holeRadius));
+			diffDice.Add(createHoleSphere(1 + holeOffset, spacing, 1 - spacing, holeRadius));
+
+			var dice = new CsgBoolOperationNode(CsgBoolOperation.Difference,
+				Matrix4Affine.CreateRotationY(10 * MathHelper.DegToRad) * Matrix4Affine.CreateTranslation(new Vector3(-0.5, 0, -0.5)));
+			dice.AddChild(diffDice);
+
+			var sceneRoot = new CsgBoolOperationNode(CsgBoolOperation.Union);
+			sceneRoot.AddChild(dice, floor);
+
+			sceneRoot.PrecomputeTransformCaches(Matrix4Affine.CreateIdentity());
+			scene.SceneRoot = sceneRoot;
+
+			return scene;
+		}
+
+
+		private CsgObjectNode createHoleSphere(double x, double y, double z, double radius) {
+			return new CsgObjectNode(unitSphere,
+				new PhongMaterial() {
+					BaseColor = new ColorRgbt(0.17f, 0.15f, 0.15f),
+					DiffuseReflectionCoef = new ColorRgbt(1, 1, 1),
+				},
+				Matrix4Affine.CreateTranslation(new Vector3(x, y, z)) * Matrix4Affine.CreateScale(radius)
+			);
+		}
 
 		//public Scene CreateMengerSpongeScene() {
 		//	var scene = createEmptyScene();
