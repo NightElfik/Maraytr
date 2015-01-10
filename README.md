@@ -9,6 +9,8 @@ The core was written in four days and without third-party libraries.
 The scene is represented as CSG and supported primitives are sphere, cube, and plane.
 It is possible to do basic boolean operations like union, intersection, subtraction, or xor.
 
+**Author**: Marek Fiser &lt; code@marekfiser.cz &gt;
+
 **Project page**: http://www.marekfiser.com/Projects/Maraytr
 
 **License**: Public domain, see LICENSE.txt for details.

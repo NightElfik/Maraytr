@@ -6,6 +6,8 @@
 # .NET rubbish
 *.suo
 *.vsmdi
+*.user
+
 
 bin/
 obj/
